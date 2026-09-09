@@ -13,6 +13,7 @@ import { useGameState } from "@/hooks/useGameState";
 import { PixelAvatar } from "@/components/PixelAvatar";
 import { DayCard } from "@/components/DayCard";
 import { AchievementsPanel } from "@/components/AchievementsPanel";
+import { SyncChip } from "@/components/SyncChip";
 
 function iso(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -99,6 +100,7 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <SyncChip sync={game.sync} />
             <div className="pixel-panel px-3 py-2 text-center">
               <div className="font-pixel text-[8px] text-orange-400">
                 {game.streak > 0 ? `${game.streak} DIA${game.streak > 1 ? "S" : ""}` : "—"}

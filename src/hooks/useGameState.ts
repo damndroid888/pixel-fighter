@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ACTIVITIES,
   ACHIEVEMENTS,
@@ -7,6 +7,15 @@ import {
   NEIGONG_DOMINGO,
 } from "@/data/plan";
 import type { Exercise, Activity, Stats } from "@/data/plan";
+import {
+  findOrCreateGist,
+  loadGistSave,
+  loadSyncConfig,
+  mergeSaves,
+  pushGistSave,
+  storeSyncConfig,
+} from "@/lib/githubSync";
+import type { GistSave, SyncConfig } from "@/lib/githubSync";
 
 const STORAGE_KEY = "pixel-fighter-state-v1";
 
@@ -152,6 +161,114 @@ export function useGameState() {
     [state]
   );
 
+  // ===== sincronização com GitHub (gist) =====
+  const [syncCfg, setSyncCfg] = useState<SyncConfig | null>(() => loadSyncConfig());
+  const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "error">("idle");
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [lastSync, setLastSync] = useState<string | null>(null);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ref espelho do estado para callbacks estáveis
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  const buildSave = useCallback((): GistSave => {
+    return {
+      checks: stateRef.current.checks,
+      startDate: stateRef.current.startDate,
+      updatedAt: new Date().toISOString(),
+    };
+  }, []);
+
+  const doPush = useCallback(async () => {
+    if (!syncCfg) return;
+    setSyncStatus("syncing");
+    try {
+      await pushGistSave(syncCfg.token, syncCfg.gistId, buildSave());
+      setSyncStatus("idle");
+      setSyncError(null);
+      setLastSync(new Date().toLocaleString());
+    } catch (e) {
+      setSyncStatus("error");
+      setSyncError(e instanceof Error ? e.message : "Falha ao sincronizar.");
+    }
+  }, [syncCfg, buildSave]);
+
+  const doSyncNow = useCallback(async () => {
+    if (!syncCfg) return;
+    setSyncStatus("syncing");
+    setSyncError(null);
+    try {
+      const remote = await loadGistSave(syncCfg.token, syncCfg.gistId);
+      const local = buildSave();
+      const merged = remote ? mergeSaves(remote, local) : local;
+      if (remote) {
+        setState(() => ({ checks: merged.checks, startDate: merged.startDate }));
+      }
+      await pushGistSave(syncCfg.token, syncCfg.gistId, merged);
+      setSyncStatus("idle");
+      setLastSync(new Date().toLocaleString());
+    } catch (e) {
+      setSyncStatus("error");
+      setSyncError(e instanceof Error ? e.message : "Falha ao sincronizar.");
+    }
+  }, [syncCfg, buildSave]);
+
+  // autosave (debounce 2s) a cada mudança quando sincronizado
+  useEffect(() => {
+    if (!syncCfg) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      void doPush();
+    }, 2000);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.checks, syncCfg]);
+
+  const enableSync = useCallback(
+    async (token: string): Promise<boolean> => {
+      setSyncStatus("syncing");
+      setSyncError(null);
+      try {
+        const cfg = { token: token.trim(), gistId: "" };
+        const gistId = await findOrCreateGist(cfg.token, buildSave());
+        const full = { token: cfg.token, gistId };
+        setSyncCfg(full);
+        storeSyncConfig(full);
+        // baixa remoto, faz merge bidirecional e sobe o resultado
+        const remote = await loadGistSave(full.token, full.gistId);
+        const local = buildSave();
+        const merged = remote ? mergeSaves(remote, local) : local;
+        if (remote && JSON.stringify(merged.checks) !== JSON.stringify(local.checks)) {
+          setState(() => ({ checks: merged.checks, startDate: merged.startDate }));
+        }
+        await pushGistSave(full.token, full.gistId, merged);
+        setSyncStatus("idle");
+        setLastSync(new Date().toLocaleString());
+        return true;
+      } catch (e) {
+        setSyncStatus("error");
+        setSyncError(e instanceof Error ? e.message : "Falha ao conectar.");
+        setSyncCfg(null);
+        storeSyncConfig(null);
+        return false;
+      }
+    },
+    [buildSave]
+  );
+
+  const disableSync = useCallback(() => {
+    setSyncCfg(null);
+    storeSyncConfig(null);
+    setSyncStatus("idle");
+    setSyncError(null);
+    setLastSync(null);
+  }, []);
+
   // ===== conquistas =====
   const achievements = useMemo(() => {
     let rehabDays = 0;
@@ -189,5 +306,14 @@ export function useGameState() {
     results,
     dayChecks,
     achievements,
+    sync: {
+      enabled: syncCfg !== null,
+      status: syncStatus,
+      error: syncError,
+      lastSync,
+      enable: enableSync,
+      disable: disableSync,
+      syncNow: doSyncNow,
+    },
   };
 }

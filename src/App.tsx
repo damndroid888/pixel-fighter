@@ -4,6 +4,7 @@ import {
   ACTIVITIES,
   NEIGONG_DAILY,
   NEIGONG_DOMINGO,
+  PHASE0_ACTIVITIES,
   REST_DAYS,
   WEEK_FOCUS,
   WEEK_ORDER,
@@ -98,12 +99,15 @@ export default function App() {
   }, [game.achievements]);
 
   // atividade principal de cada dia da semana visual
+  // Fase 0 (semanas 1–2): blocos leves de ~12 min · Fase 1 (semanas 3+): treinos principais
+  const phase = game.weekNumber <= 2 ? 0 : 1;
   const mainByIdx = useMemo(() => {
     const map = new Map<number, Activity>();
-    for (const a of ACTIVITIES) map.set((a.weekday + 6) % 7, a);
+    const list = phase === 0 ? PHASE0_ACTIVITIES : ACTIVITIES;
+    for (const a of list) map.set((a.weekday + 6) % 7, a);
     map.set(6, NEIGONG_DOMINGO); // domingo = índice 6
     return map;
-  }, []);
+  }, [phase]);
 
   const todayMain = mainByIdx.get(todayIdx) ?? null;
   const todayRest = REST_DAYS[new Date().getDay()];
@@ -122,7 +126,9 @@ export default function App() {
               PIXEL FIGHTER
             </h1>
             <p className="text-[11px] text-slate-400 mt-1">
-              Fase 1 · Adaptação · Semana {game.weekNumber}/4 — preparação p/ boxe & BJJ
+              {phase === 0
+                ? `Fase 0 · Acender o Dojo · Semana ${game.weekNumber}/2 — só comparecer`
+                : `Fase 1 · Fundamentos · Semana ${game.weekNumber}/4 — preparação p/ boxe & BJJ`}
             </p>
           </div>
           <div className="flex items-center gap-3">

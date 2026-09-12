@@ -5,6 +5,7 @@ import {
   LEVELS,
   NEIGONG_DAILY,
   NEIGONG_DOMINGO,
+  PHASE0_ACTIVITIES,
 } from "@/data/plan";
 import type { Exercise, Activity, Stats } from "@/data/plan";
 import {
@@ -17,7 +18,7 @@ import {
 } from "@/lib/githubSync";
 import type { GistSave, SyncConfig } from "@/lib/githubSync";
 
-const STORAGE_KEY = "pixel-fighter-state-v1";
+const STORAGE_KEY = "pixel-fighter-state-v2";
 
 // checks: { "2026-09-08": { "forca_a:fi": true, ... } }
 export interface GameState {
@@ -52,7 +53,7 @@ export interface ActivityResult {
 }
 
 function allActivities(): Activity[] {
-  return [...ACTIVITIES, NEIGONG_DAILY, NEIGONG_DOMINGO];
+  return [...ACTIVITIES, ...PHASE0_ACTIVITIES, NEIGONG_DAILY, NEIGONG_DOMINGO];
 }
 
 function activityKey(a: Activity, ex: Exercise): string {
@@ -149,11 +150,13 @@ export function useGameState() {
   }, [state.startDate]);
 
   // progresso da semana corrente: atividades principais completas / 4
+  // Fase 0 (semanas 1–2) conta os blocos leves; Fase 1 conta os treinos principais
   const weekProgress = useMemo(() => {
-    const ids = ACTIVITIES.map((a) => a.id);
-    const done = ids.filter((id) => results[id]?.complete).length;
-    return { done, total: ids.length };
-  }, [results]);
+    const phase = weekNumber <= 2 ? 0 : 1;
+    const list = phase === 0 ? PHASE0_ACTIVITIES : ACTIVITIES;
+    const done = list.filter((a) => results[a.id]?.complete).length;
+    return { done, total: list.length };
+  }, [results, weekNumber]);
 
   // checks de uma data específica
   const dayChecks = useCallback(

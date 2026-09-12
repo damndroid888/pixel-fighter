@@ -45,6 +45,8 @@ const G = {
     "Como fazer:\n• Alongamento: braço estendido à frente, palma para baixo; puxe os dedos com a outra mão 30s (3×). Você deve sentir alongar a parte de fora do antebraço\n• Excêntrico: antebraço apoiado na coxa, segure uma garrafa de 500ml–1L com a palma para baixo; use a outra mão para erguer o punho, e desça SOZINHO bem devagar (3 segundos). 3 × 15\nCuidados: é o tratamento da epicondilite — faça TODOS os dias, mesmo sem treinar. Dor leve (até 3/10) é aceitável; dor que aumenta = pare e reduza o peso.",
   shadowboxing:
     "Como fazer:\n• Postura de luta: pé da frente apontado à frente, do outro a ~45°, peso dividido\n• Guarda alta: mãos na altura do queixo, cotovelos perto do corpo\n• Jab (da frente): estica o braço girando o ombro, mão volta rápido para a guarda\n• Direto (de trás): gira o quadril e o pé ao mesmo tempo — a força sai do chão\n• Mexa a cabeça depois de cada golpe (esquiva)\nCuidados: NESSA FASE é técnica pura, sem força máxima — sacode brusco de cotovelo irrita o tendão. Se o cotovelo reclamar, faça golpes mais curtos e próximos ao corpo.",
+  deslocamento:
+    "Como fazer:\n• Postura de luta: peso dividido entre os pés, guarda alta, queixo baixo\n• Passos curtos para frente e para trás SEM cruzar os pés (o da frente anda, o de trás segue)\n• Depois para os lados: o pé mais próximo da direção sai primeiro\n• 1 min por direção, ritmo calmo e constante\nCuidados: passos menores se o joelho reclamar. Este é o deslocamento real do boxe — quem cruza os pés tropeça ou leva golpe. Aqui a meta é só acostumar os pés.",
   agachamentoLivre:
     "Como fazer:\n• Pés na largura dos ombros, pontas levemente para fora\n• Desça empurrando o quadril para trás e flexionando os joelhos, como se sentasse num banco\n• Desça até onde conseguir sem a lombar arredondar\n• Suba empurrando o chão com o pé inteiro\nCuidados: o joelho DEVE acompanhar a direção da ponta do pé (nem cai para dentro, nem para fora). Suba contraindo o glúteo no final — isso protege o LCA.",
   afundoEstatico:
@@ -189,6 +191,101 @@ export const ACTIVITIES: Activity[] = [
   },
 ];
 
+// ===== FASE 0 — "Acender o Dojo" (semanas 1–2) =====
+// Sessões de ~12 min: provar ao cérebro que o compromisso é pequeno e cumprível.
+// Mesma estrutura dos 4 dias (Seg/Ter/Qui/Sáb), um bloco por dia.
+
+const F0_AQUECIMENTO =
+  "Como fazer (4 min):\n• Caminhada estacionária 2 min (vai acelerando aos poucos)\n• Rotação de ombros e quadril 1 min\n• Agachamento leve 1 min, amplitude confortável\nCuidados: é só isso. O aquecimento curto é o ritual de 'agora começa' — ele avisa ao cérebro que a sessão começou.";
+const F0_FECHAMENTO =
+  "Como fazer (3 min):\n• Respiração abdominal: 5 respirações profundas pela barriga (inspira nariz, expira soltando)\n• 1 alongamento que o corpo pedir — sem agenda, sem obrigação\nCuidados: o fechamento marca o fim da sessão. Respire devagar; se a mente vagar, volte sem julgamento.";
+
+export const PHASE0_ACTIVITIES: Activity[] = [
+  {
+    id: "f0_a",
+    weekday: 1,
+    dayLabel: "Segunda",
+    title: "Fase 0 — Bloco A: Corpo de base",
+    emoji: "🟤",
+    accent: "#d97706",
+    bonusXp: 25,
+    versions: {
+      red: "Aquecimento 2min + 1 exercício do bloco + fechamento",
+      yellow: "Sessão completa como listada (~12 min)",
+      green: "Sessão completa + 1 série extra em cada exercício",
+    },
+    exercises: [
+      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
+      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", guide: G.agachamentoLivre },
+      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", guide: G.flexaoInclinada },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", guide: G.prancha },
+      { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
+    ],
+  },
+  {
+    id: "f0_b",
+    weekday: 2,
+    dayLabel: "Terça",
+    title: "Fase 0 — Bloco B: Pernas e raiz",
+    emoji: "🟤",
+    accent: "#65a30d",
+    bonusXp: 25,
+    versions: {
+      red: "Aquecimento 2min + 1 exercício do bloco + fechamento",
+      yellow: "Sessão completa como listada (~12 min)",
+      green: "Sessão completa + 1 série extra em cada exercício",
+    },
+    exercises: [
+      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
+      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", guide: G.agachamentoLivre },
+      { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", guide: G.gluteBridge },
+      { id: "au", name: "Apoio unipodal", xp: 10, hint: "2 × 15s/perna", guide: G.apoioUnipodal },
+      { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
+    ],
+  },
+  {
+    id: "f0_c",
+    weekday: 4,
+    dayLabel: "Quinta",
+    title: "Fase 0 — Bloco C: Sombras",
+    emoji: "🟤",
+    accent: "#dc2626",
+    bonusXp: 25,
+    versions: {
+      red: "Aquecimento 2min + shadowboxing 1×1min + fechamento",
+      yellow: "Sessão completa como listada (~12 min)",
+      green: "Sessão completa + 1 série extra em cada exercício",
+    },
+    exercises: [
+      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
+      { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", guide: G.shadowboxing },
+      { id: "ds", name: "Deslocamento em guarda", xp: 15, hint: "2 × 1 min", guide: G.deslocamento },
+      { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
+    ],
+  },
+  {
+    id: "f0_d",
+    weekday: 6,
+    dayLabel: "Sábado",
+    title: "Fase 0 — Bloco D: Costas sem dor",
+    emoji: "🟤",
+    accent: "#0891b2",
+    bonusXp: 25,
+    versions: {
+      red: "Aquecimento 2min + 1 exercício do bloco + fechamento",
+      yellow: "Sessão completa como listada (~12 min)",
+      green: "Sessão completa + 1 série extra em cada exercício",
+    },
+    exercises: [
+      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", guide: G.remadaFaixa },
+      { id: "sm", name: "Superman", xp: 15, hint: "2 × 8", guide: G.superman },
+      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2 × 10s", guide: G.pranchaLateral },
+      { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
+    ],
+  },
+];
+
 export const NEIGONG_DAILY: Activity = {
   id: "neigong_daily",
   weekday: -1,
@@ -226,10 +323,10 @@ export const REST_DAYS: Record<number, string> = {
 };
 
 export const WEEK_FOCUS = [
-  "SÓ COMPARECER. Versão 🔴 conta como treino. Flexão inclinada 2×8 · zhan zhuang 3 min.",
-  "Progressão suave: agachamento 3×10 · remada 2×10 · zhan zhuang 5 min.",
-  "Shadowboxing 2×2min · zhan zhuang 7 min · água 2,5L/dia.",
-  "Semana 6 do plano: flexão 3×12 · 10 min de zhan zhuang. Pronto para a Fase 2.",
+  "FASE 0 — SÓ COMPARECER. 12 min por sessão; a versão mínima conta. Zhan zhuang: 1 min.",
+  "FASE 0 — 3 presenças na semana = critério de avanço cumprido. Zhan zhuang: 1–2 min.",
+  "FASE 1 — volume de entrada: flexão inclinada 2×8 · zhan zhuang 3 min.",
+  "FASE 1 — agachamento 3×10 · remada 2×10 · zhan zhuang 5 min.",
 ];
 
 export const LEVELS = [

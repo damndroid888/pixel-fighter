@@ -278,6 +278,19 @@ export function useGameState() {
       if (Object.keys(day).some((k) => k.endsWith(":rc"))) rehabDays++;
       if (bjKeys.every((k) => day[k])) baduanjinDays++;
     }
+    // reentrada: existe um par de dias ativos consecutivos com gap de 4+ dias (pausa de 3+)
+    let cameBackAfterBreak = false;
+    {
+      const days = Object.keys(state.checks).sort();
+      for (let i = 1; i < days.length; i++) {
+        const prev = new Date(days[i - 1] + "T00:00:00").getTime();
+        const next = new Date(days[i] + "T00:00:00").getTime();
+        if ((next - prev) / 86400000 >= 4) {
+          cameBackAfterBreak = true;
+          break;
+        }
+      }
+    }
     const stats: Stats = {
       totalXp,
       streak,
@@ -290,6 +303,7 @@ export function useGameState() {
       activeDays: Object.keys(state.checks).length,
       rehabDays,
       baduanjinDays,
+      cameBackAfterBreak,
     };
     return ACHIEVEMENTS.map((a) => ({ ...a, unlocked: a.test(stats) }));
   }, [state, totalXp, streak, weekProgress, level, results]);

@@ -9,6 +9,8 @@ export interface Exercise {
   guide?: string;
 }
 
+export type EnergyMode = "red" | "yellow" | "green";
+
 export interface Activity {
   id: string;
   weekday: number; // 0 = domingo ... 6 = sábado (JS Date.getDay())
@@ -18,6 +20,8 @@ export interface Activity {
   accent: string; // hex
   bonusXp: number;
   exercises: Exercise[];
+  // versões do semáforo de energia (Fase 1 — semana 3 como referência de volume)
+  versions?: Record<EnergyMode, string>;
 }
 
 export const WEEK_ORDER = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"] as const;
@@ -96,6 +100,11 @@ export const ACTIVITIES: Activity[] = [
     emoji: "💪",
     accent: "#f97316",
     bonusXp: 25,
+    versions: {
+      red: "Aquecimento + flexão inclinada 1×6 + prancha 1×15s + respiração",
+      yellow: "+ flexão inclinada 2×8 · prancha 2×20s · dead bug 2×6",
+      green: "+ pike push-up 2×5 · apoio unipodal 2×15s · reab. cotovelo",
+    },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×6-8→3×10-12", guide: G.flexaoInclinada },
@@ -115,6 +124,11 @@ export const ACTIVITIES: Activity[] = [
     emoji: "🥊",
     accent: "#ef4444",
     bonusXp: 25,
+    versions: {
+      red: "Aquecimento + deslocamento em guarda 2×1min + agachamento 1×8",
+      yellow: "+ shadowboxing 1×2min · agachamento 2×10 · glute bridge 2×10",
+      green: "+ shadow 2×2min · afundo 2×6/p · panturrilha 2×12 · ext. joelho 1×10/p",
+    },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", guide: G.shadowboxing },
@@ -133,6 +147,11 @@ export const ACTIVITIES: Activity[] = [
     emoji: "🧗",
     accent: "#22c55e",
     bonusXp: 25,
+    versions: {
+      red: "Aquecimento + remada com faixa 1×6 + superman 1×8",
+      yellow: "+ remada 2×8 · superman 2×10 · prancha lateral 2×10s",
+      green: "+ face pull 2×10 · remada australiana 1×4 (só se sem dor) · unipodal 2×15s",
+    },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×6-8→3×10-12", guide: G.remadaFaixa },
@@ -152,6 +171,11 @@ export const ACTIVITIES: Activity[] = [
     emoji: "🔥",
     accent: "#eab308",
     bonusXp: 25,
+    versions: {
+      red: "Aquecimento + shadowboxing 1×2min + alongamento 3min",
+      yellow: "+ shadow 2×2min · jabs 2×20s · mountain 2×20s · mobilidade 2min",
+      green: "+ combinação 2×20s · burpees 1×20s · mobilidade 4min · alongamento 5min",
+    },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "sb", name: "Shadowboxing", xp: 15, hint: "3 × 2 min", guide: G.shadowboxing },
@@ -202,10 +226,10 @@ export const REST_DAYS: Record<number, string> = {
 };
 
 export const WEEK_FOCUS = [
-  "SÓ COMPARECER. Rotina vale mais que intensidade. Zhan zhuang: 2–3 min (wuji).",
-  "+5s nas pranchas. Zhan zhuang sobe para 5 min.",
-  "+1 série na remada com faixa (total 4). Zhan zhuang: 7 min. Água: 2,5L/dia.",
-  "Shadowboxing vira 2→3 rounds 2min. Zhan zhuang: 10 min (abraçar a árvore).",
+  "SÓ COMPARECER. Versão 🔴 conta como treino. Flexão inclinada 2×8 · zhan zhuang 3 min.",
+  "Progressão suave: agachamento 3×10 · remada 2×10 · zhan zhuang 5 min.",
+  "Shadowboxing 2×2min · zhan zhuang 7 min · água 2,5L/dia.",
+  "Semana 6 do plano: flexão 3×12 · 10 min de zhan zhuang. Pronto para a Fase 2.",
 ];
 
 export const LEVELS = [
@@ -235,6 +259,7 @@ export interface Stats {
   activeDays: number; // dias com pelo menos 1 check
   rehabDays: number; // dias com reabilitação de cotovelo feita
   baduanjinDays: number; // domingos com Ba Duan Jin completo
+  cameBackAfterBreak: boolean; // voltou a treinar após pausa de 3+ dias
 }
 
 export interface Achievement {
@@ -329,5 +354,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     desc: "20 dias ativos no plano",
     icon: "👑",
     test: (s) => s.activeDays >= 20,
+  },
+  {
+    id: "phoenix",
+    name: "Fênix",
+    desc: "Voltou a treinar após uma pausa de 3+ dias — voltar é habilidade, não fracasso",
+    icon: "🦅",
+    test: (s) => s.cameBackAfterBreak,
   },
 ];

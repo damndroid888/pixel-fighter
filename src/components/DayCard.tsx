@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Activity, Exercise } from "@/data/plan";
+import type { Activity, EnergyMode, Exercise } from "@/data/plan";
 
 interface Props {
   activity: Activity;
@@ -14,18 +14,38 @@ interface Props {
   checks: Record<string, boolean>;
   onToggle: (dateISO: string, activity: Activity, ex: Exercise) => void;
   compact?: boolean;
+  mode?: EnergyMode; // semáforo de energia do dia
 }
 
-export function DayCard({ activity, dateISO, checks, onToggle, compact }: Props) {
+const MODE_META: Record<EnergyMode, { label: string; color: string; bg: string }> = {
+  red: { label: "VERSÃO MÍNIMA", color: "#f87171", bg: "#450a0a" },
+  yellow: { label: "VERSÃO BASE", color: "#facc15", bg: "#422006" },
+  green: { label: "VERSÃO COMPLETA", color: "#4ade80", bg: "#052e16" },
+};
+
+export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: Props) {
   const [guideEx, setGuideEx] = useState<Exercise | null>(null);
   const doneCount = activity.exercises.filter((e) => checks[`${activity.id}:${e.id}`]).length;
   const complete = doneCount === activity.exercises.length;
+  const versionText = mode && activity.versions ? activity.versions[mode] : null;
+  const modeMeta = mode ? MODE_META[mode] : null;
 
   return (
     <div
       className="pixel-panel p-3"
       style={{ borderColor: complete ? activity.accent : undefined }}
     >
+      {versionText && modeMeta && (
+        <div
+          className="mb-2 px-2 py-1.5 border-2"
+          style={{ borderColor: modeMeta.color, backgroundColor: modeMeta.bg }}
+        >
+          <div className="font-pixel text-[7px]" style={{ color: modeMeta.color }}>
+            {modeMeta.label} {mode === "red" ? "· CONTA COMO TREINO ✓" : ""}
+          </div>
+          <div className="text-[11px] text-slate-200 leading-snug mt-0.5">{versionText}</div>
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-lg leading-none">{activity.emoji}</span>

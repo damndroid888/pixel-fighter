@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Toaster, toast } from "sonner";
 import {
   ACTIVITIES,
@@ -8,7 +8,7 @@ import {
   WEEK_FOCUS,
   WEEK_ORDER,
 } from "@/data/plan";
-import type { Activity } from "@/data/plan";
+import type { Activity, EnergyMode } from "@/data/plan";
 import { useGameState } from "@/hooks/useGameState";
 import { PixelAvatar } from "@/components/PixelAvatar";
 import { DayCard } from "@/components/DayCard";
@@ -37,11 +37,37 @@ function visualIndex(d: Date): number {
   return (d.getDay() + 6) % 7;
 }
 
+const ENERGY_KEY = "pixel-fighter-energy-mode";
+const ENERGY_MODES: { id: EnergyMode; emoji: string; label: string; active: string }[] = [
+  { id: "red", emoji: "🔴", label: "Dia difícil — mínima", active: "#f87171" },
+  { id: "yellow", emoji: "🟡", label: "Dia normal — base", active: "#facc15" },
+  { id: "green", emoji: "🟢", label: "Dia bom — completa", active: "#4ade80" },
+];
+
+function loadEnergyMode(): EnergyMode {
+  try {
+    const raw = localStorage.getItem(ENERGY_KEY);
+    if (raw === "red" || raw === "yellow" || raw === "green") return raw;
+  } catch {
+    /* ignora */
+  }
+  return "yellow";
+}
+
 export default function App() {
   const game = useGameState();
   const dates = useMemo(() => weekDates(), []);
   const todayISO = iso(new Date());
   const todayIdx = visualIndex(new Date());
+  const [energyMode, setEnergyMode] = useState<EnergyMode>(loadEnergyMode);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(ENERGY_KEY, energyMode);
+    } catch {
+      /* ignora */
+    }
+  }, [energyMode]);
 
   // toast de level up
   const prevLevel = useRef(game.level.index);
@@ -157,6 +183,41 @@ export default function App() {
           </div>
         </section>
 
+        {/* SEMÁFORO DE ENERGIA */}
+        <section className="pixel-panel p-3">
+          <div className="font-pixel text-[9px] text-slate-300 mb-2">
+            ▶ SEMÁFORO DE ENERGIA — como está seu dia?
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {ENERGY_MODES.map((m) => {
+              const on = energyMode === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setEnergyMode(m.id)}
+                  className="font-pixel text-[8px] px-2 py-2 border-2 text-left transition-colors"
+                  style={{
+                    borderColor: on ? m.active : "#334155",
+                    color: on ? m.active : "#64748b",
+                    backgroundColor: on ? "#0f172a" : "#0b1220",
+                  }}
+                >
+                  {m.emoji} {m.label.toUpperCase()}
+                  {m.id === "red" && on && (
+                    <span className="block text-[7px] mt-1 text-slate-400 font-normal" style={{ fontFamily: "inherit" }}>
+                      CONTA COMO TREINO. XP INTEGRAL.
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-slate-500 mt-2 leading-snug">
+            A versão mínima (🔴) vale exatamente o mesmo que a completa. Nunca existe recomeço do
+            zero — sumiu? Volte com 1 sessão 🔴 no dia seguinte. 🦅
+          </p>
+        </section>
+
         {/* HOJE */}
         <section>
           <h2 className="font-pixel text-[10px] text-slate-300 mb-3">▶ MISSÕES DE HOJE</h2>
@@ -166,6 +227,7 @@ export default function App() {
               dateISO={todayISO}
               checks={game.dayChecks(todayISO)}
               onToggle={game.toggle}
+              mode={energyMode}
             />
           ) : (
             <div className="pixel-panel p-4 text-[13px] text-slate-300">
@@ -222,11 +284,13 @@ export default function App() {
         </section>
 
         {/* REGRA DE OURO */}
-        <footer className="pixel-panel p-4 border-red-900/60" style={{ borderColor: "#7f1d1d" }}>
-          <div className="font-pixel text-[9px] text-red-400 mb-1">⚠ REGRA DO MÍNIMO VIÁVEL</div>
+        <footer className="pixel-panel p-4" style={{ borderColor: "#7f1d1d" }}>
+          <div className="font-pixel text-[9px] text-red-400 mb-1">⚠ REGRA DA REENTRADA</div>
           <p className="text-[12px] text-slate-300 leading-snug">
-            Nos dias ruins, aquecimento + 1 bloco (15 min) conta como treino feito. Nunca zerar 2x
-            seguidas. Dor no cotovelo acima de 3/10 = reduza o exercício, não o plano inteiro.
+            Sumiu por dias ou semanas? Não existe "recomeçar do zero" nem treino de compensação.
+            Ao voltar, faça <strong>1 sessão da versão 🔴</strong> no dia seguinte — só isso. O streak
+            volta a contar sem multa, e a conquista 🦅 Fênix existe exatamente para isso: voltar é
+            habilidade, não fracasso. Dor no cotovelo acima de 3/10 = adapte o exercício, nunca o plano.
           </p>
         </footer>
       </main>

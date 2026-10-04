@@ -35,7 +35,32 @@ function loadState(): GameState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as GameState;
-      if (parsed && typeof parsed.checks === "object" && parsed.startDate) return parsed;
+      if (parsed && typeof parsed.checks === "object" && parsed.startDate) {
+        // migração: reestruturação por padrões de movimento renomeou os ids dos treinos
+        const idMap: Record<string, string> = {
+          "forca_a:": "push_core:",
+          "boxe_pernas:": "squat_single:",
+          "forca_b:": "pull_core:",
+          "boxe_cond:": "bend_circuit:",
+        };
+        let migrated = false;
+        const checks: GameState["checks"] = {};
+        for (const [date, day] of Object.entries(parsed.checks)) {
+          const nd: Record<string, boolean> = {};
+          for (const [k, v] of Object.entries(day)) {
+            const prefix = Object.keys(idMap).find((p) => k.startsWith(p));
+            if (prefix) {
+              nd[idMap[prefix] + k.slice(prefix.length)] = v;
+              migrated = true;
+            } else {
+              nd[k] = v;
+            }
+          }
+          if (Object.keys(nd).length) checks[date] = nd;
+        }
+        if (migrated) parsed.checks = checks;
+        return parsed;
+      }
     }
   } catch {
     /* ignora e recomeça */

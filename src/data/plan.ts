@@ -7,9 +7,22 @@ export interface Exercise {
   xp: number;
   hint?: string;
   guide?: string;
+  pattern?: PatternId;
 }
 
 export type EnergyMode = "red" | "yellow" | "green";
+
+export type PatternId = "squat" | "push" | "bend" | "pull" | "single" | "core" | "skill";
+
+export const PATTERN_META: Record<PatternId, { tag: string; color: string; label: string }> = {
+  squat: { tag: "SQT", color: "#f97316", label: "squat — agachar" },
+  push: { tag: "PSH", color: "#ef4444", label: "push — empurrar" },
+  bend: { tag: "BND", color: "#eab308", label: "bend — dobrar o quadril" },
+  pull: { tag: "PLL", color: "#22c55e", label: "pull — puxar" },
+  single: { tag: "SGL", color: "#38bdf8", label: "single leg — uma perna" },
+  core: { tag: "COR", color: "#a78bfa", label: "core — tronco" },
+  skill: { tag: "SKL", color: "#f472b6", label: "habilidade" },
+};
 
 export interface Activity {
   id: string;
@@ -53,6 +66,10 @@ const G = {
     "Como fazer:\n• Dê um passo à frente e PARA (por isso 'estático' — sem avanço brusco)\n• Desça os dois joelhos até ~90° do da frente\n• Tronco ereto, peso no calcanhar da frente\n• Suba empurrando com a perna da frente e volte\nCuidados: passo longo o suficiente para o joelho da frente NÃO passar muito da ponta do pé. Se o joelho reclamar, reduza a profundidade. Segure numa parede se precisar de equilíbrio.",
   gluteBridge:
     "Como fazer:\n• Deitado, joelhos flexionados, pés no chão na largura do quadril\n• Suba o quadril até alinhar ombros–quadril–joelhos\n• Aperte os glúteos 2s no alto\n• Desça devagar\nCuidados: não arqueie a lombar no alto — o movimento é do quadril, não da coluna. Este músculo é o 'amortecedor' do seu joelho.",
+  goodMorning:
+    "Como fazer:\n• Pés na largura dos ombros, mãos atrás da cabeça ou segurando uma mochila leve no peito\n• Joelhos semiflexionados e FIXOS — o movimento é do quadril, não do joelho\n• Empurre o quadril para trás, inclinando o tronco à frente com a coluna neutra, até sentir alongar a parte de trás das coxas\n• Volta contraindo os glúteos, quadril à frente\nCuidados: coluna sempre neutra — se as costas arredondarem, diminua a amplitude. Sem peso ou mochila leve (<5kg). Este é o 'bend', o padrão que sustenta o levantamento técnico do BJJ — treine com paciência.",
+  circuito:
+    "Como fazer (1 rodada, sem pressa):\n• Agachamento 8 reps · Flexão inclinada 6 reps · Remada com faixa 8 reps · Prancha 15s\n• 30–60s de respiro entre exercícios\n• Intenção: técnica sob leve cansaço, como no fim de um round\nCuidados: é um circuito LEVE nesta fase — se a técnica quebrar, pare. O objetivo é o corpo aprender a repetir os padrões com o coração acelerado, que é como o combate exige.",
   panturrilha:
     "Como fazer:\n• Em pé, apoie as mãos na parede se precisar\n• Suba na ponta dos pés o máximo que conseguir (2s subindo)\n• Pause 1s no alto, desça devagar até alongar\n• 15–20 repetições\nCuidados: suba RETO, sem rolar o pé para fora. Forte panturrilha = tornozelo estável = joelho protegido.",
   extensaoJoelho:
@@ -93,100 +110,100 @@ const G = {
     "Como fazer (fechamento, pp. 49–51):\n• Mãos sobre o dantian (abaixo do umbigo), HOMENS: mão DIREITA por cima da esquerda\n• Feche os olhos, respire 6–9 respirações profundas pela barriga\n• Visualize a prática 'guardada' no centro do corpo\n• Esfregue as palmas até aquecer e passe no rosto\nCuidados: não pule o fechamento — o manual o trata como parte integrante da prática. É o momento de transição de volta ao dia.",
 };
 
+// ===== FASE 1 — Fundamentos por padrões de movimento =====
+// squat / push / bend / pull / single leg / core — a forma como o corpo luta.
+
 export const ACTIVITIES: Activity[] = [
   {
-    id: "forca_a",
+    id: "push_core",
     weekday: 1,
     dayLabel: "Segunda",
-    title: "Força A — Peito / Ombros / Core",
-    emoji: "💪",
+    title: "Push + Core — Empurrar & Tronco",
+    emoji: "✊",
     accent: "#f97316",
     bonusXp: 25,
     versions: {
       red: "Aquecimento + flexão inclinada 1×6 + prancha 1×15s + respiração",
       yellow: "+ flexão inclinada 2×8 · prancha 2×20s · dead bug 2×6",
-      green: "+ pike push-up 2×5 · apoio unipodal 2×15s · reab. cotovelo",
+      green: "+ flexão comum 1×5 · pike push-up 1×4 · reab. cotovelo",
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×6-8→3×10-12", guide: G.flexaoInclinada },
-      { id: "fc", name: "Flexão comum", xp: 15, hint: "1×5-6→2×6-10", guide: G.flexaoComum },
-      { id: "pp", name: "Pike push-up", xp: 15, hint: "1×4-5→2×6-8", guide: G.pikePushup },
-      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2×15s→3×30s", guide: G.prancha },
-      { id: "db", name: "Dead bug", xp: 10, hint: "2×5→3×8", guide: G.deadbug },
-      { id: "au", name: "Apoio unipodal (equilíbrio)", xp: 10, hint: "2×15s→3×30s", guide: G.apoioUnipodal },
+      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×8→3×12", pattern: "push", guide: G.flexaoInclinada },
+      { id: "fc", name: "Flexão comum", xp: 15, hint: "1×5→2×8", pattern: "push", guide: G.flexaoComum },
+      { id: "pp", name: "Pike push-up", xp: 15, hint: "1×4→2×8", pattern: "push", guide: G.pikePushup },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2×15s→3×30s", pattern: "core", guide: G.prancha },
+      { id: "db", name: "Dead bug", xp: 10, hint: "2×5→3×8", pattern: "core", guide: G.deadbug },
       { id: "rc", name: "Reabilitação de cotovelo", xp: 10, hint: "5 min", guide: G.reabilitacao },
     ],
   },
   {
-    id: "boxe_pernas",
+    id: "squat_single",
     weekday: 2,
     dayLabel: "Terça",
-    title: "Boxe leve + Pernas",
-    emoji: "🥊",
+    title: "Squat + Single Leg — Pernas & Raiz",
+    emoji: "🦵",
     accent: "#ef4444",
     bonusXp: 25,
     versions: {
-      red: "Aquecimento + deslocamento em guarda 2×1min + agachamento 1×8",
-      yellow: "+ shadowboxing 1×2min · agachamento 2×10 · glute bridge 2×10",
-      green: "+ shadow 2×2min · afundo 2×6/p · panturrilha 2×12 · ext. joelho 1×10/p",
+      red: "Aquecimento + agachamento 1×8 + apoio unipodal 2×15s",
+      yellow: "+ agachamento 2×10 · glute bridge 2×10 · afundo 2×6/perna",
+      green: "+ panturrilha 2×12 · ext. joelho 1×10/perna",
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", guide: G.shadowboxing },
-      { id: "ag", name: "Agachamento livre", xp: 15, hint: "2×10→3×15", guide: G.agachamentoLivre },
-      { id: "af", name: "Afundo estático", xp: 15, hint: "3 × 8 por perna", guide: G.afundoEstatico },
-      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×8→3×12", guide: G.gluteBridge },
-      { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "2×12→3×20", guide: G.panturrilha },
-      { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2 × 12 por perna", guide: G.extensaoJoelho },
+      { id: "ag", name: "Agachamento livre", xp: 15, hint: "2×10→3×15", pattern: "squat", guide: G.agachamentoLivre },
+      { id: "af", name: "Afundo estático", xp: 15, hint: "2×6→3×8/perna", pattern: "single", guide: G.afundoEstatico },
+      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×8→3×12", pattern: "bend", guide: G.gluteBridge },
+      { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "2×12→3×20", pattern: "single", guide: G.panturrilha },
+      { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2×12/perna", pattern: "single", guide: G.extensaoJoelho },
+      { id: "au", name: "Apoio unipodal (equilíbrio)", xp: 10, hint: "2×15s→3×30s", pattern: "single", guide: G.apoioUnipodal },
     ],
   },
   {
-    id: "forca_b",
+    id: "pull_core",
     weekday: 4,
     dayLabel: "Quinta",
-    title: "Força B — Costas adaptadas / Braços / Core",
-    emoji: "🧗",
+    title: "Pull + Core — Puxar & Tronco",
+    emoji: "🪢",
     accent: "#22c55e",
     bonusXp: 25,
     versions: {
       red: "Aquecimento + remada com faixa 1×6 + superman 1×8",
       yellow: "+ remada 2×8 · superman 2×10 · prancha lateral 2×10s",
-      green: "+ face pull 2×10 · remada australiana 1×4 (só se sem dor) · unipodal 2×15s",
+      green: "+ face pull 2×10 · remada australiana 1×4 (só se sem dor) · reab.",
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×6-8→3×10-12", guide: G.remadaFaixa },
-      { id: "ra", name: "Remada australiana", xp: 15, hint: "1×4-5→2×6-8, só se sem dor", guide: G.remadaAustraliana },
-      { id: "sm", name: "Superman", xp: 10, hint: "2×8→3×12", guide: G.superman },
-      { id: "fp", name: "Face pull com faixa", xp: 10, hint: "2 × 12", guide: G.facePull },
-      { id: "pl", name: "Prancha lateral", xp: 10, hint: "1×15s→2×20s", guide: G.pranchaLateral },
-      { id: "au", name: "Apoio unipodal (olhos fechados)", xp: 10, hint: "3 × 20s", guide: G.apoioUnipodal },
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×8→3×12", pattern: "pull", guide: G.remadaFaixa },
+      { id: "ra", name: "Remada australiana", xp: 15, hint: "1×4→2×6, só se sem dor", pattern: "pull", guide: G.remadaAustraliana },
+      { id: "fp", name: "Face pull com faixa", xp: 10, hint: "2 × 12", pattern: "pull", guide: G.facePull },
+      { id: "sm", name: "Superman", xp: 10, hint: "2×8→3×12", pattern: "core", guide: G.superman },
+      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2×10s→2×20s", pattern: "core", guide: G.pranchaLateral },
       { id: "rc", name: "Reabilitação de cotovelo", xp: 10, hint: "5 min", guide: G.reabilitacao },
     ],
   },
   {
-    id: "boxe_cond",
+    id: "bend_circuit",
     weekday: 6,
     dayLabel: "Sábado",
-    title: "Boxe condicionamento + Mobilidade",
-    emoji: "🔥",
+    title: "Bend + Circuito do Lutador",
+    emoji: "⤵",
     accent: "#eab308",
     bonusXp: 25,
     versions: {
-      red: "Aquecimento + shadowboxing 1×2min + alongamento 3min",
-      yellow: "+ shadow 2×2min · jabs 2×20s · mountain 2×20s · mobilidade 2min",
-      green: "+ combinação 2×20s · burpees 1×20s · mobilidade 4min · alongamento 5min",
+      red: "Aquecimento + glute bridge 1×10 + shadowboxing 1×2min",
+      yellow: "+ good morning 2×8 · shadow 2×2min · mobilidade 2min",
+      green: "+ circuito do lutador 1 rodada · alongamento 4min",
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "sb", name: "Shadowboxing", xp: 15, hint: "3 × 2 min", guide: G.shadowboxing },
-      { id: "jb", name: "Jabs rápidos no ar", xp: 10, hint: "2×20s→3×30s, leve", guide: G.jabs },
-      { id: "cb", name: "Combinação lenta", xp: 10, hint: "2×20s→3×30s", guide: G.combinacao },
-      { id: "mc", name: "Mountain climbers", xp: 10, hint: "2×20s→3×30s", guide: G.mountain },
-      { id: "bp", name: "Burpees adaptado", xp: 15, hint: "1×20s→2×45s", guide: G.burpee },
-      { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "4 min", guide: G.mobilidade },
-      { id: "al", name: "Alongamento completo", xp: 10, hint: "5 min", guide: G.alongamento },
+      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×10→3×12", pattern: "bend", guide: G.gluteBridge },
+      { id: "gm", name: "Good morning com mochila leve", xp: 15, hint: "2 × 8, coluna neutra", pattern: "bend", guide: G.goodMorning },
+      { id: "ci", name: "Circuito do Lutador", xp: 15, hint: "1 rodada: agach 8 · flex 6 · remada 8 · prancha 15s", pattern: "core", guide: G.circuito },
+      { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", pattern: "skill", guide: G.shadowboxing },
+      { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade },
+      { id: "al", name: "Alongamento completo", xp: 10, hint: "4 min", guide: G.alongamento },
     ],
   },
 ];
@@ -205,7 +222,7 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     id: "f0_a",
     weekday: 1,
     dayLabel: "Segunda",
-    title: "Fase 0 — Bloco A: Corpo de base",
+    title: "Fase 0 — Bloco A: Push + Core",
     emoji: "🟤",
     accent: "#d97706",
     bonusXp: 25,
@@ -216,9 +233,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", guide: G.agachamentoLivre },
-      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", guide: G.flexaoInclinada },
-      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", guide: G.prancha },
+      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", pattern: "push", guide: G.flexaoInclinada },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", pattern: "core", guide: G.prancha },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -226,7 +242,7 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     id: "f0_b",
     weekday: 2,
     dayLabel: "Terça",
-    title: "Fase 0 — Bloco B: Pernas e raiz",
+    title: "Fase 0 — Bloco B: Squat + Single leg",
     emoji: "🟤",
     accent: "#65a30d",
     bonusXp: 25,
@@ -237,9 +253,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", guide: G.agachamentoLivre },
-      { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", guide: G.gluteBridge },
-      { id: "au", name: "Apoio unipodal", xp: 10, hint: "2 × 15s/perna", guide: G.apoioUnipodal },
+      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", pattern: "squat", guide: G.agachamentoLivre },
+      { id: "au", name: "Apoio unipodal", xp: 15, hint: "2 × 15s/perna", pattern: "single", guide: G.apoioUnipodal },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -258,8 +273,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", guide: G.shadowboxing },
-      { id: "ds", name: "Deslocamento em guarda", xp: 15, hint: "2 × 1 min", guide: G.deslocamento },
+      { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.shadowboxing },
+      { id: "ds", name: "Deslocamento em guarda", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.deslocamento },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -267,7 +282,7 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     id: "f0_d",
     weekday: 6,
     dayLabel: "Sábado",
-    title: "Fase 0 — Bloco D: Costas sem dor",
+    title: "Fase 0 — Bloco D: Pull + Bend",
     emoji: "🟤",
     accent: "#0891b2",
     bonusXp: 25,
@@ -278,9 +293,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", guide: G.remadaFaixa },
-      { id: "sm", name: "Superman", xp: 15, hint: "2 × 8", guide: G.superman },
-      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2 × 10s", guide: G.pranchaLateral },
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", pattern: "pull", guide: G.remadaFaixa },
+      { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", pattern: "bend", guide: G.gluteBridge },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },

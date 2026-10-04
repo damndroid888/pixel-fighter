@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PATTERN_META } from "@/data/plan";
 import type { Activity, EnergyMode, Exercise } from "@/data/plan";
 
 interface Props {
@@ -99,9 +100,22 @@ export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: 
                     backgroundColor: on ? activity.accent : "transparent",
                   }}
                 />
-                <span className={`text-[12px] leading-tight flex-1 ${on ? "line-through" : ""}`}>
+                <span
+                  className={`text-[12px] leading-tight flex-1 ${on ? "line-through" : ""}`}>
                   {ex.name}
                 </span>
+                {ex.pattern && (
+                  <span
+                    className="font-pixel text-[6px] px-1 py-px border shrink-0 hidden sm:inline"
+                    style={{
+                      color: PATTERN_META[ex.pattern].color,
+                      borderColor: PATTERN_META[ex.pattern].color,
+                    }}
+                    title={PATTERN_META[ex.pattern].label}
+                  >
+                    {PATTERN_META[ex.pattern].tag}
+                  </span>
+                )}
                 {ex.hint && (
                   <span className="text-[10px] text-slate-500 shrink-0 hidden sm:inline">
                     {ex.hint}

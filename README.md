@@ -1,6 +1,6 @@
-# 🎮 Pixel Fighter — Tracker de Treino
+# 🎮 Pixel Fighter — Tracker de Treino + Estudo
 
-App gamificado em pixel art para acompanhar o plano de preparação física para **boxe e jiu-jitsu** com prática diária de **neigong** (zhan zhuang + Ba Duan Jin).
+App gamificado em pixel art para acompanhar o plano de preparação física para **boxe e jiu-jitsu** com prática diária de **neigong** (zhan zhuang + Ba Duan Jin) — e, desde 17/10/2026, a trilha de estudos de **Defesa Cibernética Cívica** (20 min/dia + revisão e artefato aos domingos). Uma XP só: treinar o corpo e treinar a mente são a mesma missão.
 
 ## Recursos
 
@@ -8,7 +8,8 @@ App gamificado em pixel art para acompanhar o plano de preparação física para
 - ✅ Streak de dias consecutivos e progresso semanal
 - ✅ Grade completa da semana (4 treinos + neigong diário + Ba Duan Jin no domingo)
 - ✅ Explicação técnica de cada exercício (botão `?`) com adaptações para epicondilite e joelho operado (LCA)
-- ✅ Dojo de Conquistas — 12 badges desbloqueáveis
+- ✅ Dojo de Conquistas — 12 badges desbloqueáveis (+ 6 da trilha de estudo)
+- ✅ Trilha de estudo: mínimo diário de 20 min, revisão semanal de domingo e artefato para leigos (método 3.4), com guias embutidos
 - ✅ Progresso salvo no navegador (localStorage), sem conta
 
 ## Uso

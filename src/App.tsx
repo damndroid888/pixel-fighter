@@ -10,6 +10,7 @@ import {
   WEEK_ORDER,
 } from "@/data/plan";
 import type { Activity, EnergyMode } from "@/data/plan";
+import { STUDY_DAILY, STUDY_SUNDAY } from "@/data/study";
 import { useGameState } from "@/hooks/useGameState";
 import { PixelAvatar } from "@/components/PixelAvatar";
 import { DayCard } from "@/components/DayCard";
@@ -249,6 +250,15 @@ export default function App() {
               compact
             />
           </div>
+          <div className="mt-3">
+            <DayCard
+              activity={STUDY_DAILY}
+              dateISO={todayISO}
+              checks={game.dayChecks(todayISO)}
+              onToggle={game.toggle}
+              compact
+            />
+          </div>
         </section>
 
         {/* SEMANA */}
@@ -282,6 +292,37 @@ export default function App() {
               );
             })}
           </div>
+        </section>
+
+        {/* ESTUDO — DEFESA CIBERNÉTICA CÍVICA */}
+        <section>
+          <h2 className="font-pixel text-[10px] text-slate-300 mb-3">▶ ESTUDO — DEFESA CIBERNÉTICA CÍVICA</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="font-pixel text-[8px] text-slate-500 mb-1 px-1">TODOS OS DIAS · MÍNIMO 20 MIN</div>
+              <DayCard
+                activity={STUDY_DAILY}
+                dateISO={todayISO}
+                checks={game.dayChecks(todayISO)}
+                onToggle={game.toggle}
+              />
+            </div>
+            <div>
+              <div className="font-pixel text-[8px] text-slate-500 mb-1 px-1">DOMINGO</div>
+              <DayCard
+                activity={STUDY_SUNDAY}
+                dateISO={iso(dates[6])}
+                checks={game.dayChecks(iso(dates[6]))}
+                onToggle={game.toggle}
+              />
+            </div>
+          </div>
+          <p className="text-[10px] text-slate-500 mt-2 leading-snug">
+            Mínimo inegociável: 20 min por dia — no pior dia, conta integral. A Regra da
+            Reentrada vale aqui também: sumiu? Volte com 1 módulo 🔴 no dia seguinte, sem multa.
+            Estudar sem produzir artefato é meio-estudo — o artefato de domingo transforma
+            aprendizado em proteção real para alguém. 🛡️
+          </p>
         </section>
 
         {/* CONQUISTAS */}

@@ -9,6 +9,12 @@ import {
 } from "@/data/plan";
 import type { Exercise, Activity, Stats } from "@/data/plan";
 import {
+  STUDY_DAILY,
+  STUDY_SUNDAY,
+  STUDY_ACHIEVEMENTS,
+} from "@/data/study";
+import type { StudyStats } from "@/data/study";
+import {
   findOrCreateGist,
   loadGistSave,
   loadSyncConfig,
@@ -78,7 +84,7 @@ export interface ActivityResult {
 }
 
 function allActivities(): Activity[] {
-  return [...ACTIVITIES, ...PHASE0_ACTIVITIES, NEIGONG_DAILY, NEIGONG_DOMINGO];
+  return [...ACTIVITIES, ...PHASE0_ACTIVITIES, NEIGONG_DAILY, NEIGONG_DOMINGO, STUDY_DAILY, STUDY_SUNDAY];
 }
 
 function activityKey(a: Activity, ex: Exercise): string {
@@ -333,7 +339,51 @@ export function useGameState() {
       baduanjinDays,
       cameBackAfterBreak,
     };
-    return ACHIEVEMENTS.map((a) => ({ ...a, unlocked: a.test(stats) }));
+    // ===== trilha de estudo (Defesa Cibernética Cívica) =====
+    const studyDaysSet = new Set<string>();
+    let artifactDays = 0;
+    for (const [dateISO, day] of Object.entries(state.checks)) {
+      const keys = Object.keys(day);
+      if (keys.some((k) => k.startsWith("estudo_"))) studyDaysSet.add(dateISO);
+      if (day["estudo_domingo:art"]) artifactDays++;
+    }
+    // streak de estudo: dias consecutivos com check de estudo, contando de hoje (ou ontem)
+    let studyStreak = 0;
+    {
+      const d = new Date();
+      const has = (date: Date) => studyDaysSet.has(date.toISOString().slice(0, 10));
+      if (studyDaysSet.size > 0) {
+        if (!has(d)) d.setDate(d.getDate() - 1); // hoje ainda pode render
+        while (has(d)) {
+          studyStreak++;
+          d.setDate(d.getDate() - 1);
+        }
+      }
+    }
+    // reentrada no estudo: par de dias de estudo com gap de 4+ dias
+    let studyCameBackAfterBreak = false;
+    {
+      const days = [...studyDaysSet].sort();
+      for (let i = 1; i < days.length; i++) {
+        const prev = new Date(days[i - 1] + "T00:00:00").getTime();
+        const next = new Date(days[i] + "T00:00:00").getTime();
+        if ((next - prev) / 86400000 >= 4) {
+          studyCameBackAfterBreak = true;
+          break;
+        }
+      }
+    }
+    const studyStats: StudyStats = {
+      studyStreak,
+      studyActiveDays: studyDaysSet.size,
+      artifactDays,
+      studyCameBackAfterBreak,
+    };
+
+    return [
+      ...ACHIEVEMENTS.map((a) => ({ ...a, unlocked: a.test(stats) })),
+      ...STUDY_ACHIEVEMENTS.map((a) => ({ ...a, unlocked: a.test(studyStats) })),
+    ];
   }, [state, totalXp, streak, weekProgress, level, results]);
 
   return {

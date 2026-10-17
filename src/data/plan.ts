@@ -47,6 +47,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_cam",
     name: "Caminhada/corrida estacionária (3 min)",
+    img: "exercises/w_cam.png",
     xp: 2,
     warmup: true,
     guide:
@@ -55,6 +56,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_pol",
     name: "Polichinelos (1 min)",
+    img: "exercises/w_pol.png",
     xp: 2,
     warmup: true,
     guide:
@@ -63,6 +65,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_giro",
     name: "Giros de braços (1 min)",
+    img: "exercises/w_giro.png",
     xp: 2,
     warmup: true,
     guide:
@@ -71,6 +74,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_rot",
     name: "Rotação de tronco e quadril (1 min)",
+    img: "exercises/w_rot.png",
     xp: 2,
     warmup: true,
     guide:
@@ -79,6 +83,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_agq",
     name: "Agachamentos sem peso (2 min)",
+    img: "exercises/w_agq.png",
     xp: 2,
     warmup: true,
     guide:
@@ -87,6 +92,7 @@ export const WARMUP_MAIN: Exercise[] = [
   {
     id: "w_din",
     name: "Alongamento dinâmico (2 min)",
+    img: "exercises/w_din.png",
     xp: 2,
     warmup: true,
     guide:
@@ -98,6 +104,7 @@ export const WARMUP_F0: Exercise[] = [
   {
     id: "w0_cam",
     name: "Caminhada estacionária (2 min)",
+    img: "exercises/w_cam.png",
     xp: 3,
     warmup: true,
     guide:
@@ -106,6 +113,7 @@ export const WARMUP_F0: Exercise[] = [
   {
     id: "w0_rot",
     name: "Rotação de ombros e quadril (1 min)",
+    img: "exercises/w_rot.png",
     xp: 3,
     warmup: true,
     guide:
@@ -114,6 +122,7 @@ export const WARMUP_F0: Exercise[] = [
   {
     id: "w0_agq",
     name: "Agachamento leve (1 min)",
+    img: "exercises/w_agq.png",
     xp: 4,
     warmup: true,
     guide:

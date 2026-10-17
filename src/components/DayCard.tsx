@@ -26,10 +26,72 @@ const MODE_META: Record<EnergyMode, { label: string; color: string; bg: string }
 
 export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: Props) {
   const [guideEx, setGuideEx] = useState<Exercise | null>(null);
-  const doneCount = activity.exercises.filter((e) => checks[`${activity.id}:${e.id}`]).length;
-  const complete = doneCount === activity.exercises.length;
+  const warmupEx = activity.warmup ?? [];
+  const allEx = warmupEx.length > 0 ? [...warmupEx, ...activity.exercises] : activity.exercises;
+  const doneCount = allEx.filter((e) => checks[`${activity.id}:${e.id}`]).length;
+  const complete = doneCount === allEx.length;
   const versionText = mode && activity.versions ? activity.versions[mode] : null;
   const modeMeta = mode ? MODE_META[mode] : null;
+
+  const renderRow = (ex: Exercise) => {
+    const key = `${activity.id}:${ex.id}`;
+    const on = !!checks[key];
+    return (
+      <div
+        key={key}
+        className={`w-full flex items-center gap-2 text-left px-2 py-1.5 border transition-colors ${
+          on
+            ? "bg-slate-800 border-slate-600 text-slate-400"
+            : "bg-slate-900/60 border-slate-800 text-slate-200 hover:border-slate-600"
+        }`}
+      >
+        <button
+          onClick={() => onToggle(dateISO, activity, ex)}
+          aria-label={on ? `Desmarcar ${ex.name}` : `Marcar ${ex.name}`}
+          className="flex items-center gap-2 flex-1 min-w-0 text-left"
+        >
+          <span
+            className="inline-block w-3.5 h-3.5 border-2 shrink-0"
+            style={{
+              borderColor: on ? activity.accent : "#475569",
+              backgroundColor: on ? activity.accent : "transparent",
+            }}
+          />
+          <span
+            className={`text-[12px] leading-tight flex-1 ${on ? "line-through" : ""}`}>
+            {ex.name}
+          </span>
+          {ex.pattern && (
+            <span
+              className="font-pixel text-[6px] px-1 py-px border shrink-0 hidden sm:inline"
+              style={{
+                color: PATTERN_META[ex.pattern].color,
+                borderColor: PATTERN_META[ex.pattern].color,
+              }}
+              title={PATTERN_META[ex.pattern].label}
+            >
+              {PATTERN_META[ex.pattern].tag}
+            </span>
+          )}
+          {ex.hint && (
+            <span className="text-[10px] text-slate-500 shrink-0 hidden sm:inline">
+              {ex.hint}
+            </span>
+          )}
+          <span className="font-pixel text-[7px] text-slate-500 shrink-0">+{ex.xp}</span>
+        </button>
+        {ex.guide && (
+          <button
+            onClick={() => setGuideEx(ex)}
+            aria-label={`Como fazer: ${ex.name}`}
+            className="font-pixel text-[9px] text-slate-400 hover:text-amber-300 border border-slate-700 hover:border-amber-500 px-1.5 py-0.5 shrink-0 transition-colors"
+          >
+            ?
+          </button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -60,7 +122,7 @@ export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: 
           </div>
         </div>
         <div className="font-pixel text-[8px] text-slate-400 whitespace-nowrap">
-          {doneCount}/{activity.exercises.length}
+          {doneCount}/{allEx.length}
         </div>
       </div>
 
@@ -69,72 +131,23 @@ export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: 
         <div
           className="h-full transition-all duration-300"
           style={{
-            width: `${(doneCount / activity.exercises.length) * 100}%`,
+            width: `${(doneCount / allEx.length) * 100}%`,
             backgroundColor: activity.accent,
           }}
         />
       </div>
 
+      {warmupEx.length > 0 && (
+        <div className="font-pixel text-[7px] text-orange-400 mb-1 px-1">🔥 AQUECIMENTO</div>
+      )}
       <div className="space-y-1">
-        {activity.exercises.map((ex) => {
-          const key = `${activity.id}:${ex.id}`;
-          const on = !!checks[key];
-          return (
-            <div
-              key={key}
-              className={`w-full flex items-center gap-2 text-left px-2 py-1.5 border transition-colors ${
-                on
-                  ? "bg-slate-800 border-slate-600 text-slate-400"
-                  : "bg-slate-900/60 border-slate-800 text-slate-200 hover:border-slate-600"
-              }`}
-            >
-              <button
-                onClick={() => onToggle(dateISO, activity, ex)}
-                aria-label={on ? `Desmarcar ${ex.name}` : `Marcar ${ex.name}`}
-                className="flex items-center gap-2 flex-1 min-w-0 text-left"
-              >
-                <span
-                  className="inline-block w-3.5 h-3.5 border-2 shrink-0"
-                  style={{
-                    borderColor: on ? activity.accent : "#475569",
-                    backgroundColor: on ? activity.accent : "transparent",
-                  }}
-                />
-                <span
-                  className={`text-[12px] leading-tight flex-1 ${on ? "line-through" : ""}`}>
-                  {ex.name}
-                </span>
-                {ex.pattern && (
-                  <span
-                    className="font-pixel text-[6px] px-1 py-px border shrink-0 hidden sm:inline"
-                    style={{
-                      color: PATTERN_META[ex.pattern].color,
-                      borderColor: PATTERN_META[ex.pattern].color,
-                    }}
-                    title={PATTERN_META[ex.pattern].label}
-                  >
-                    {PATTERN_META[ex.pattern].tag}
-                  </span>
-                )}
-                {ex.hint && (
-                  <span className="text-[10px] text-slate-500 shrink-0 hidden sm:inline">
-                    {ex.hint}
-                  </span>
-                )}
-                <span className="font-pixel text-[7px] text-slate-500 shrink-0">+{ex.xp}</span>
-              </button>
-              {ex.guide && (
-                <button
-                  onClick={() => setGuideEx(ex)}
-                  aria-label={`Como fazer: ${ex.name}`}
-                  className="font-pixel text-[9px] text-slate-400 hover:text-amber-300 border border-slate-700 hover:border-amber-500 px-1.5 py-0.5 shrink-0 transition-colors"
-                >
-                  ?
-                </button>
-              )}
-            </div>
-          );
-        })}
+        {warmupEx.map((ex) => renderRow(ex))}
+      </div>
+      {(activity.warmup?.length ?? 0) > 0 && (
+        <div className="font-pixel text-[7px] text-slate-500 mt-3 mb-1 px-1">▶ TREINO PRINCIPAL</div>
+      )}
+      <div className="space-y-1">
+        {activity.exercises.map((ex) => renderRow(ex))}
       </div>
 
       {complete && (

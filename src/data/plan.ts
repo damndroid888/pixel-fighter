@@ -9,6 +9,7 @@ export interface Exercise {
   guide?: string;
   img?: string; // ilustração pixel art exibida no diálogo do guia
   pattern?: PatternId;
+  warmup?: boolean; // itens de aquecimento renderizados em seção própria no DayCard
 }
 
 export type EnergyMode = "red" | "yellow" | "green";
@@ -34,9 +35,91 @@ export interface Activity {
   accent: string; // hex
   bonusXp: number;
   exercises: Exercise[];
+  warmup?: Exercise[]; // aquecimento em seção própria, itens marcáveis individualmente
   // versões do semáforo de energia (Fase 1 — semana 3 como referência de volume)
   versions?: Record<EnergyMode, string>;
 }
+
+// ===== Aquecimentos (seção própria no DayCard) =====
+// Fase 1+: padrão de 10 min. Fase 0: versão curta de 4 min.
+
+export const WARMUP_MAIN: Exercise[] = [
+  {
+    id: "w_cam",
+    name: "Caminhada/corrida estacionária (3 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 3 min andando no lugar, acelerando aos poucos até trotar leve\n• Braços soltos, passo curto\nCuidados: no frio, alongue um pouco mais antes de começar.",
+  },
+  {
+    id: "w_pol",
+    name: "Polichinelos (1 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 1 min de polichinelos clássicos: pés fecham e abrem junto com os braços subindo\n• Ritmo constante, aterrissagem suave\nCuidados: se o joelho reclamar, faça sem o pulo (passo lateral).",
+  },
+  {
+    id: "w_giro",
+    name: "Giros de braços (1 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 30 s girando os braços para frente, 30 s para trás\n• Ombros soltos, círculos amplos e lentos\nCuidados: sem rigidez no pescoço — o movimento é só de ombros.",
+  },
+  {
+    id: "w_rot",
+    name: "Rotação de tronco e quadril (1 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 30 s girando o tronco para os lados, braços soltos\n• 30 s círculos de quadril, devagar\nCuidados: movimento controlado — aquecimento não é teste de amplitude.",
+  },
+  {
+    id: "w_agq",
+    name: "Agachamentos sem peso (2 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 2 min de agachamentos leves, amplitude confortável\n• Joelhos acompanhando a ponta dos pés\nCuidados: é o primeiro contato do joelho com o treino — devagar e sem peso.",
+  },
+  {
+    id: "w_din",
+    name: "Alongamento dinâmico (2 min)",
+    xp: 2,
+    warmup: true,
+    guide:
+      "Como fazer:\n• Toque nos pés alternando as mãos, pernas estendidas (sem travar)\n• Balanço controlado de pernas para frente e para os lados\nCuidados: dinâmico = com movimento, sem prender posição. Estático fica para o fim do treino.",
+  },
+];
+
+export const WARMUP_F0: Exercise[] = [
+  {
+    id: "w0_cam",
+    name: "Caminhada estacionária (2 min)",
+    xp: 3,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 2 min andando no lugar, acelerando aos poucos\nCuidados: é só isso — o aquecimento curto é o ritual de 'agora começa'. Ele avisa ao cérebro que a sessão começou.",
+  },
+  {
+    id: "w0_rot",
+    name: "Rotação de ombros e quadril (1 min)",
+    xp: 3,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 30 s giros de braços lentos, ombros soltos\n• 30 s círculos de quadril\nCuidados: movimento devagar e controlado.",
+  },
+  {
+    id: "w0_agq",
+    name: "Agachamento leve (1 min)",
+    xp: 4,
+    warmup: true,
+    guide:
+      "Como fazer:\n• 1 min de agachamentos leves, amplitude confortável\nCuidados: primeiro contato do joelho com o treino — sem peso, sem pressa.",
+  },
+];
 
 export const WEEK_ORDER = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"] as const;
 
@@ -128,8 +211,8 @@ export const ACTIVITIES: Activity[] = [
       yellow: "+ flexão inclinada 2×8 · prancha 2×20s · dead bug 2×6",
       green: "+ flexão comum 1×5 · pike push-up 1×4 · reab. cotovelo",
     },
+    warmup: WARMUP_MAIN,
     exercises: [
-      { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×8→3×12", pattern: "push", guide: G.flexaoInclinada, img: "exercises/fi.png" },
       { id: "fc", name: "Flexão comum", xp: 15, hint: "1×5→2×8", pattern: "push", guide: G.flexaoComum },
       { id: "pp", name: "Pike push-up", xp: 15, hint: "1×4→2×8", pattern: "push", guide: G.pikePushup, img: "exercises/pp.png" },
@@ -151,14 +234,14 @@ export const ACTIVITIES: Activity[] = [
       yellow: "+ agachamento 2×10 · glute bridge 2×10 · afundo 2×6/perna",
       green: "+ panturrilha 2×12 · ext. joelho 1×10/perna",
     },
+    warmup: WARMUP_MAIN,
     exercises: [
-      { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "ag", name: "Agachamento livre", xp: 15, hint: "2×10→3×15", pattern: "squat", guide: G.agachamentoLivre, img: "exercises/ag.png" },
       { id: "af", name: "Afundo estático", xp: 15, hint: "2×6→3×8/perna", pattern: "single", guide: G.afundoEstatico, img: "exercises/af.png" },
       { id: "gb", name: "Glute bridge", xp: 10, hint: "2×8→3×12", pattern: "bend", guide: G.gluteBridge, img: "exercises/gb.png" },
-      { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "2×12→3×20", pattern: "single", guide: G.panturrilha },
-      { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2×12/perna", pattern: "single", guide: G.extensaoJoelho },
-      { id: "au", name: "Apoio unipodal (equilíbrio)", xp: 10, hint: "2×15s→3×30s", pattern: "single", guide: G.apoioUnipodal },
+      { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "2×12→3×20", pattern: "single", guide: G.panturrilha, img: "exercises/pt.png" },
+      { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2×12/perna", pattern: "single", guide: G.extensaoJoelho, img: "exercises/et.png" },
+      { id: "au", name: "Apoio unipodal (equilíbrio)", xp: 10, hint: "2×15s→3×30s", pattern: "single", guide: G.apoioUnipodal, img: "exercises/au.png" },
     ],
   },
   {
@@ -174,13 +257,13 @@ export const ACTIVITIES: Activity[] = [
       yellow: "+ remada 2×8 · superman 2×10 · prancha lateral 2×10s",
       green: "+ face pull 2×10 · remada australiana 1×4 (só se sem dor) · reab.",
     },
+    warmup: WARMUP_MAIN,
     exercises: [
-      { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×8→3×12", pattern: "pull", guide: G.remadaFaixa, img: "exercises/rf.png" },
       { id: "ra", name: "Remada australiana", xp: 15, hint: "1×4→2×6, só se sem dor", pattern: "pull", guide: G.remadaAustraliana },
-      { id: "fp", name: "Face pull com faixa", xp: 10, hint: "2 × 12", pattern: "pull", guide: G.facePull },
-      { id: "sm", name: "Superman", xp: 10, hint: "2×8→3×12", pattern: "core", guide: G.superman },
-      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2×10s→2×20s", pattern: "core", guide: G.pranchaLateral },
+      { id: "fp", name: "Face pull com faixa", xp: 10, hint: "2 × 12", pattern: "pull", guide: G.facePull, img: "exercises/fp.png" },
+      { id: "sm", name: "Superman", xp: 10, hint: "2×8→3×12", pattern: "core", guide: G.superman, img: "exercises/sm.png" },
+      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2×10s→2×20s", pattern: "core", guide: G.pranchaLateral, img: "exercises/pl2.png" },
       { id: "rc", name: "Reabilitação de cotovelo", xp: 10, hint: "5 min", guide: G.reabilitacao },
     ],
   },
@@ -197,14 +280,14 @@ export const ACTIVITIES: Activity[] = [
       yellow: "+ good morning 2×8 · shadow 2×2min · mobilidade 2min",
       green: "+ circuito do lutador 1 rodada · alongamento 4min",
     },
+    warmup: WARMUP_MAIN,
     exercises: [
-      { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
       { id: "gb", name: "Glute bridge", xp: 10, hint: "2×10→3×12", pattern: "bend", guide: G.gluteBridge, img: "exercises/gb.png" },
       { id: "gm", name: "Good morning com mochila leve", xp: 15, hint: "2 × 8, coluna neutra", pattern: "bend", guide: G.goodMorning, img: "exercises/gm.png" },
-      { id: "ci", name: "Circuito do Lutador", xp: 15, hint: "1 rodada: agach 8 · flex 6 · remada 8 · prancha 15s", pattern: "core", guide: G.circuito },
+      { id: "ci", name: "Circuito do Lutador", xp: 15, hint: "1 rodada: agach 8 · flex 6 · remada 8 · prancha 15s", pattern: "core", guide: G.circuito, img: "exercises/ci.png" },
       { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", pattern: "skill", guide: G.shadowboxing, img: "exercises/sb.png" },
-      { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade },
-      { id: "al", name: "Alongamento completo", xp: 10, hint: "4 min", guide: G.alongamento },
+      { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade, img: "exercises/mo.png" },
+      { id: "al", name: "Alongamento completo", xp: 10, hint: "4 min", guide: G.alongamento, img: "exercises/al.png" },
     ],
   },
 ];
@@ -213,8 +296,6 @@ export const ACTIVITIES: Activity[] = [
 // Sessões de ~12 min: provar ao cérebro que o compromisso é pequeno e cumprível.
 // Mesma estrutura dos 4 dias (Seg/Ter/Qui/Sáb), um bloco por dia.
 
-const F0_AQUECIMENTO =
-  "Como fazer (4 min):\n• Caminhada estacionária 2 min (vai acelerando aos poucos)\n• Rotação de ombros e quadril 1 min\n• Agachamento leve 1 min, amplitude confortável\nCuidados: é só isso. O aquecimento curto é o ritual de 'agora começa' — ele avisa ao cérebro que a sessão começou.";
 const F0_FECHAMENTO =
   "Como fazer (3 min):\n• Respiração abdominal: 5 respirações profundas pela barriga (inspira nariz, expira soltando)\n• 1 alongamento que o corpo pedir — sem agenda, sem obrigação\nCuidados: o fechamento marca o fim da sessão. Respire devagar; se a mente vagar, volte sem julgamento.";
 
@@ -232,8 +313,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
       yellow: "Sessão completa como listada (~12 min)",
       green: "Sessão completa + 1 série extra em cada exercício",
     },
+    warmup: WARMUP_F0,
     exercises: [
-      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
       { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", pattern: "push", guide: G.flexaoInclinada, img: "exercises/fi.png" },
       { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", pattern: "core", guide: G.prancha, img: "exercises/pl.png" },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
@@ -252,10 +333,10 @@ export const PHASE0_ACTIVITIES: Activity[] = [
       yellow: "Sessão completa como listada (~12 min)",
       green: "Sessão completa + 1 série extra em cada exercício",
     },
+    warmup: WARMUP_F0,
     exercises: [
-      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
       { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", pattern: "squat", guide: G.agachamentoLivre, img: "exercises/ag.png" },
-      { id: "au", name: "Apoio unipodal", xp: 15, hint: "2 × 15s/perna", pattern: "single", guide: G.apoioUnipodal },
+      { id: "au", name: "Apoio unipodal", xp: 15, hint: "2 × 15s/perna", pattern: "single", guide: G.apoioUnipodal, img: "exercises/au.png" },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -272,8 +353,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
       yellow: "Sessão completa como listada (~12 min)",
       green: "Sessão completa + 1 série extra em cada exercício",
     },
+    warmup: WARMUP_F0,
     exercises: [
-      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
       { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.shadowboxing, img: "exercises/sb.png" },
       { id: "ds", name: "Deslocamento em guarda", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.deslocamento },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
@@ -292,8 +373,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
       yellow: "Sessão completa como listada (~12 min)",
       green: "Sessão completa + 1 série extra em cada exercício",
     },
+    warmup: WARMUP_F0,
     exercises: [
-      { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
       { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", pattern: "pull", guide: G.remadaFaixa, img: "exercises/rf.png" },
       { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", pattern: "bend", guide: G.gluteBridge, img: "exercises/gb.png" },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },

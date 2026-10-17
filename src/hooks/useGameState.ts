@@ -120,9 +120,10 @@ export function useGameState() {
     let xp = 0;
     const res: Record<string, ActivityResult> = {};
     for (const a of allActivities()) {
+      const exs = a.warmup && a.warmup.length > 0 ? [...a.warmup, ...a.exercises] : a.exercises;
       const exIds: string[] = [];
       let base = 0;
-      for (const ex of a.exercises) {
+      for (const ex of exs) {
         for (const day of Object.values(state.checks)) {
           if (day[activityKey(a, ex)]) {
             exIds.push(activityKey(a, ex));
@@ -131,14 +132,14 @@ export function useGameState() {
           }
         }
       }
-      const complete = exIds.length === a.exercises.length;
+      const complete = exIds.length === exs.length;
       const gained = base + (complete ? a.bonusXp : 0);
       xp += gained;
       res[a.id] = {
         activity: a,
         exIds,
         done: exIds.length,
-        total: a.exercises.length,
+        total: exs.length,
         complete,
         xp: gained,
       };

@@ -7,7 +7,8 @@ App gamificado em pixel art para acompanhar o plano de preparação física para
 - ✅ XP, patentes de dojo (Calouro → Mestre do Neigong) e avatar pixel art que evolui
 - ✅ Streak de dias consecutivos e progresso semanal
 - ✅ Grade completa da semana (4 treinos + neigong diário + Ba Duan Jin no domingo)
-- ✅ Explicação técnica de cada exercício (botão `?`) com adaptações para epicondilite e joelho operado (LCA)
+- ✅ Explicação técnica de cada exercício (botão `?`) com adaptações para epicondilite e joelho operado (LCA), agora com **21 ilustrações pixel art** geradas sob medida
+- ✅ Aquecimento em seção própria, com cada item marcável individualmente (XP e "completo" incluem aquecimento + treino principal)
 - ✅ Dojo de Conquistas — 12 badges desbloqueáveis (+ 6 da trilha de estudo)
 - ✅ Trilha de estudo: mínimo diário de 20 min, revisão semanal de domingo e artefato para leigos (método 3.4), com guias embutidos
 - ✅ Progresso salvo no navegador (localStorage), sem conta

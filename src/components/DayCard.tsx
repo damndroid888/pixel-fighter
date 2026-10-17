@@ -155,6 +155,13 @@ export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: 
               </DialogDescription>
             )}
           </DialogHeader>
+          {guideEx?.img && (
+            <img
+              src={guideEx.img}
+              alt={guideEx.name}
+              className="w-full max-h-64 object-contain border-2 border-slate-700 bg-[#0b1020]"
+            />
+          )}
           {guideEx?.guide && (
             <div className="text-[13px] leading-relaxed text-slate-200 space-y-2 max-h-[55vh] overflow-y-auto pr-1">
               {guideEx.guide.split("\n").map((line, i) => {

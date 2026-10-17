@@ -7,6 +7,7 @@ export interface Exercise {
   xp: number;
   hint?: string;
   guide?: string;
+  img?: string; // ilustração pixel art exibida no diálogo do guia
   pattern?: PatternId;
 }
 
@@ -129,11 +130,11 @@ export const ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×8→3×12", pattern: "push", guide: G.flexaoInclinada },
+      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2×8→3×12", pattern: "push", guide: G.flexaoInclinada, img: "/exercises/fi.png" },
       { id: "fc", name: "Flexão comum", xp: 15, hint: "1×5→2×8", pattern: "push", guide: G.flexaoComum },
-      { id: "pp", name: "Pike push-up", xp: 15, hint: "1×4→2×8", pattern: "push", guide: G.pikePushup },
-      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2×15s→3×30s", pattern: "core", guide: G.prancha },
-      { id: "db", name: "Dead bug", xp: 10, hint: "2×5→3×8", pattern: "core", guide: G.deadbug },
+      { id: "pp", name: "Pike push-up", xp: 15, hint: "1×4→2×8", pattern: "push", guide: G.pikePushup, img: "/exercises/pp.png" },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2×15s→3×30s", pattern: "core", guide: G.prancha, img: "/exercises/pl.png" },
+      { id: "db", name: "Dead bug", xp: 10, hint: "2×5→3×8", pattern: "core", guide: G.deadbug, img: "/exercises/db.png" },
       { id: "rc", name: "Reabilitação de cotovelo", xp: 10, hint: "5 min", guide: G.reabilitacao },
     ],
   },
@@ -152,9 +153,9 @@ export const ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "ag", name: "Agachamento livre", xp: 15, hint: "2×10→3×15", pattern: "squat", guide: G.agachamentoLivre },
-      { id: "af", name: "Afundo estático", xp: 15, hint: "2×6→3×8/perna", pattern: "single", guide: G.afundoEstatico },
-      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×8→3×12", pattern: "bend", guide: G.gluteBridge },
+      { id: "ag", name: "Agachamento livre", xp: 15, hint: "2×10→3×15", pattern: "squat", guide: G.agachamentoLivre, img: "/exercises/ag.png" },
+      { id: "af", name: "Afundo estático", xp: 15, hint: "2×6→3×8/perna", pattern: "single", guide: G.afundoEstatico, img: "/exercises/af.png" },
+      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×8→3×12", pattern: "bend", guide: G.gluteBridge, img: "/exercises/gb.png" },
       { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "2×12→3×20", pattern: "single", guide: G.panturrilha },
       { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2×12/perna", pattern: "single", guide: G.extensaoJoelho },
       { id: "au", name: "Apoio unipodal (equilíbrio)", xp: 10, hint: "2×15s→3×30s", pattern: "single", guide: G.apoioUnipodal },
@@ -175,7 +176,7 @@ export const ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×8→3×12", pattern: "pull", guide: G.remadaFaixa },
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2×8→3×12", pattern: "pull", guide: G.remadaFaixa, img: "/exercises/rf.png" },
       { id: "ra", name: "Remada australiana", xp: 15, hint: "1×4→2×6, só se sem dor", pattern: "pull", guide: G.remadaAustraliana },
       { id: "fp", name: "Face pull com faixa", xp: 10, hint: "2 × 12", pattern: "pull", guide: G.facePull },
       { id: "sm", name: "Superman", xp: 10, hint: "2×8→3×12", pattern: "core", guide: G.superman },
@@ -198,10 +199,10 @@ export const ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento padrão (10 min)", xp: 10, guide: G.aquecimento },
-      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×10→3×12", pattern: "bend", guide: G.gluteBridge },
-      { id: "gm", name: "Good morning com mochila leve", xp: 15, hint: "2 × 8, coluna neutra", pattern: "bend", guide: G.goodMorning },
+      { id: "gb", name: "Glute bridge", xp: 10, hint: "2×10→3×12", pattern: "bend", guide: G.gluteBridge, img: "/exercises/gb.png" },
+      { id: "gm", name: "Good morning com mochila leve", xp: 15, hint: "2 × 8, coluna neutra", pattern: "bend", guide: G.goodMorning, img: "/exercises/gm.png" },
       { id: "ci", name: "Circuito do Lutador", xp: 15, hint: "1 rodada: agach 8 · flex 6 · remada 8 · prancha 15s", pattern: "core", guide: G.circuito },
-      { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", pattern: "skill", guide: G.shadowboxing },
+      { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", pattern: "skill", guide: G.shadowboxing, img: "/exercises/sb.png" },
       { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade },
       { id: "al", name: "Alongamento completo", xp: 10, hint: "4 min", guide: G.alongamento },
     ],
@@ -233,8 +234,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", pattern: "push", guide: G.flexaoInclinada },
-      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", pattern: "core", guide: G.prancha },
+      { id: "fi", name: "Flexão inclinada", xp: 15, hint: "2 × 6", pattern: "push", guide: G.flexaoInclinada, img: "/exercises/fi.png" },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "2 × 15s", pattern: "core", guide: G.prancha, img: "/exercises/pl.png" },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -253,7 +254,7 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", pattern: "squat", guide: G.agachamentoLivre },
+      { id: "ag", name: "Agachamento leve", xp: 15, hint: "2 × 10", pattern: "squat", guide: G.agachamentoLivre, img: "/exercises/ag.png" },
       { id: "au", name: "Apoio unipodal", xp: 15, hint: "2 × 15s/perna", pattern: "single", guide: G.apoioUnipodal },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
@@ -273,7 +274,7 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.shadowboxing },
+      { id: "sb", name: "Shadowboxing leve (jab e direto, sem força)", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.shadowboxing, img: "/exercises/sb.png" },
       { id: "ds", name: "Deslocamento em guarda", xp: 15, hint: "2 × 1 min", pattern: "skill", guide: G.deslocamento },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
@@ -293,8 +294,8 @@ export const PHASE0_ACTIVITIES: Activity[] = [
     },
     exercises: [
       { id: "aq", name: "Aquecimento (4 min)", xp: 10, hint: "completo", guide: F0_AQUECIMENTO },
-      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", pattern: "pull", guide: G.remadaFaixa },
-      { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", pattern: "bend", guide: G.gluteBridge },
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "2 × 8", pattern: "pull", guide: G.remadaFaixa, img: "/exercises/rf.png" },
+      { id: "gb", name: "Glute bridge", xp: 15, hint: "2 × 10", pattern: "bend", guide: G.gluteBridge, img: "/exercises/gb.png" },
       { id: "fx", name: "Fechamento: respiração + alongamento (3 min)", xp: 10, hint: "completo", guide: F0_FECHAMENTO },
     ],
   },
@@ -309,8 +310,8 @@ export const NEIGONG_DAILY: Activity = {
   accent: "#38bdf8",
   bonusXp: 10,
   exercises: [
-    { id: "zz", name: "Zhan zhuang (postura da estaca)", xp: 15, hint: "S1:1-2min→S4:10min", guide: G.zhanZhuang },
-    { id: "ra2", name: "Respiração abdominal (dan tian)", xp: 10, hint: "5 min, contar 1–10", guide: G.respiracao },
+    { id: "zz", name: "Zhan zhuang (postura da estaca)", xp: 15, hint: "S1:1-2min→S4:10min", guide: G.zhanZhuang, img: "/exercises/zz.png" },
+    { id: "ra2", name: "Respiração abdominal (dan tian)", xp: 10, hint: "5 min, contar 1–10", guide: G.respiracao, img: "/exercises/ra2.png" },
   ],
 };
 
@@ -323,7 +324,7 @@ export const NEIGONG_DOMINGO: Activity = {
   accent: "#a78bfa",
   bonusXp: 15,
   exercises: [
-    { id: "zz", name: "Zhan zhuang", xp: 15, hint: "10 min", guide: G.zhanZhuang },
+    { id: "zz", name: "Zhan zhuang", xp: 15, hint: "10 min", guide: G.zhanZhuang, img: "/exercises/zz.png" },
     { id: "s18", name: "Ba Duan Jin — abertura + segmentos 1–2", xp: 15, hint: "manual pp. 14–21", guide: G.baduanjinS12 },
     { id: "s58", name: "Ba Duan Jin — segmentos 3–5", xp: 15, hint: "cavalo raso no 5º!", guide: G.baduanjinS35 },
     { id: "s88", name: "Ba Duan Jin — segmentos 6–8", xp: 15, hint: "7º com palmas abertas", guide: G.baduanjinS68 },

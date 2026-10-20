@@ -234,6 +234,7 @@ export default function App() {
               dateISO={todayISO}
               checks={game.dayChecks(todayISO)}
               onToggle={game.toggle}
+              onClear={game.clearDay}
               mode={energyMode}
             />
           ) : (
@@ -247,6 +248,7 @@ export default function App() {
               dateISO={todayISO}
               checks={game.dayChecks(todayISO)}
               onToggle={game.toggle}
+              onClear={game.clearDay}
               compact
             />
           </div>
@@ -282,6 +284,7 @@ export default function App() {
                       dateISO={iso(d)}
                       checks={game.dayChecks(iso(d))}
                       onToggle={game.toggle}
+                      onClear={game.clearDay}
                     />
                   ) : (
                     <div className="pixel-panel p-3 text-[12px] text-slate-400">

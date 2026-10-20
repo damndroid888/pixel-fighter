@@ -14,6 +14,7 @@ interface Props {
   dateISO: string;
   checks: Record<string, boolean>;
   onToggle: (dateISO: string, activity: Activity, ex: Exercise) => void;
+  onClear?: (dateISO: string, activity: Activity) => void;
   compact?: boolean;
   mode?: EnergyMode; // semáforo de energia do dia
 }
@@ -24,7 +25,7 @@ const MODE_META: Record<EnergyMode, { label: string; color: string; bg: string }
   green: { label: "VERSÃO COMPLETA", color: "#4ade80", bg: "#052e16" },
 };
 
-export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: Props) {
+export function DayCard({ activity, dateISO, checks, onToggle, onClear, compact, mode }: Props) {
   const [guideEx, setGuideEx] = useState<Exercise | null>(null);
   const warmupEx = activity.warmup ?? [];
   const allEx = warmupEx.length > 0 ? [...warmupEx, ...activity.exercises] : activity.exercises;
@@ -121,8 +122,27 @@ export function DayCard({ activity, dateISO, checks, onToggle, compact, mode }: 
             )}
           </div>
         </div>
-        <div className="font-pixel text-[8px] text-slate-400 whitespace-nowrap">
-          {doneCount}/{allEx.length}
+        <div className="flex items-center gap-2">
+          {doneCount > 0 && onClear && (
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    `Limpar ${doneCount} exercício(s) marcado(s) neste dia? O XP desse dia será removido.`
+                  )
+                )
+                  onClear(dateISO, activity);
+              }}
+              aria-label={`Limpar marcações de ${activity.dayLabel}`}
+              className="font-pixel text-[7px] text-slate-500 hover:text-red-400 border border-slate-700 hover:border-red-500 px-1.5 py-0.5 transition-colors"
+              title="Limpar marcações deste dia"
+            >
+              LIMPAR
+            </button>
+          )}
+          <div className="font-pixel text-[8px] text-slate-400 whitespace-nowrap">
+            {doneCount}/{allEx.length}
+          </div>
         </div>
       </div>
 

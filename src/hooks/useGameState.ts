@@ -115,6 +115,25 @@ export function useGameState() {
     setState({ checks: {}, startDate: todayISO() });
   }, []);
 
+  // limpa todas as marcações de UMA atividade em UMA data
+  const clearDay = useCallback((dateISO: string, activity: Activity) => {
+    setState((s) => {
+      const day = { ...(s.checks[dateISO] ?? {}) };
+      let changed = false;
+      for (const key of Object.keys(day)) {
+        if (key.startsWith(activity.id + ":")) {
+          delete day[key];
+          changed = true;
+        }
+      }
+      if (!changed) return s;
+      const checks = { ...s.checks };
+      if (Object.keys(day).length === 0) delete checks[dateISO];
+      else checks[dateISO] = day;
+      return { ...s, checks };
+    });
+  }, []);
+
   // ---- derivados ----
   const { totalXp, results } = useMemo(() => {
     let xp = 0;
@@ -391,6 +410,7 @@ export function useGameState() {
     state,
     toggle,
     reset,
+    clearDay,
     totalXp,
     level,
     streak,

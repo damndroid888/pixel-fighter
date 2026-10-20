@@ -258,6 +258,7 @@ export default function App() {
               dateISO={todayISO}
               checks={game.dayChecks(todayISO)}
               onToggle={game.toggle}
+              onClear={game.clearDay}
               compact
             />
           </div>
@@ -308,6 +309,7 @@ export default function App() {
                 dateISO={todayISO}
                 checks={game.dayChecks(todayISO)}
                 onToggle={game.toggle}
+                onClear={game.clearDay}
               />
             </div>
             <div>
@@ -317,6 +319,7 @@ export default function App() {
                 dateISO={iso(dates[6])}
                 checks={game.dayChecks(iso(dates[6]))}
                 onToggle={game.toggle}
+                onClear={game.clearDay}
               />
             </div>
           </div>

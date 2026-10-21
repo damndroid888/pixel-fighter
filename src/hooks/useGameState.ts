@@ -27,8 +27,11 @@ import type { GistSave, SyncConfig } from "@/lib/githubSync";
 const STORAGE_KEY = "pixel-fighter-state-v2";
 
 // checks: { "2026-09-08": { "forca_a:fi": true, ... } }
+// bank: { "forca_a:fi": true, ... } — XP conquistada: checks aposentados
+// pelo LIMPAR/desmarcar vão para cá em vez de serem apagados.
 export interface GameState {
   checks: Record<string, Record<string, boolean>>;
+  bank?: Record<string, boolean>;
   startDate: string; // ISO da primeira abertura — define a semana da fase
 }
 
@@ -102,27 +105,35 @@ export function useGameState() {
     setState((s) => {
       const day = { ...(s.checks[dateISO] ?? {}) };
       const key = activityKey(activity, ex);
-      if (day[key]) delete day[key];
-      else day[key] = true;
+      const bank = { ...(s.bank ?? {}) };
+      if (day[key]) {
+        delete day[key];
+        bank[key] = true; // XP conquistada fica guardada
+      } else {
+        day[key] = true;
+      }
       const checks = { ...s.checks };
       if (Object.keys(day).length === 0) delete checks[dateISO];
       else checks[dateISO] = day;
-      return { ...s, checks };
+      return { ...s, checks, bank };
     });
   }, []);
 
   const reset = useCallback(() => {
-    setState({ checks: {}, startDate: todayISO() });
+    setState({ checks: {}, bank: {}, startDate: todayISO() });
   }, []);
 
-  // limpa todas as marcações de UMA atividade em UMA data
+  // limpa todas as marcações de UMA atividade em UMA data, SEM perder a XP:
+  // os checks removidos vão para o banco (bank) e continuam contando XP
   const clearDay = useCallback((dateISO: string, activity: Activity) => {
     setState((s) => {
       const day = { ...(s.checks[dateISO] ?? {}) };
+      const bank = { ...(s.bank ?? {}) };
       let changed = false;
       for (const key of Object.keys(day)) {
         if (key.startsWith(activity.id + ":")) {
           delete day[key];
+          bank[key] = true;
           changed = true;
         }
       }
@@ -130,22 +141,29 @@ export function useGameState() {
       const checks = { ...s.checks };
       if (Object.keys(day).length === 0) delete checks[dateISO];
       else checks[dateISO] = day;
-      return { ...s, checks };
+      return { ...s, checks, bank };
     });
   }, []);
 
   // ---- derivados ----
   const { totalXp, results } = useMemo(() => {
     let xp = 0;
+    const bank = state.bank ?? {};
     const res: Record<string, ActivityResult> = {};
     for (const a of allActivities()) {
       const exs = a.warmup && a.warmup.length > 0 ? [...a.warmup, ...a.exercises] : a.exercises;
       const exIds: string[] = [];
       let base = 0;
       for (const ex of exs) {
+        const key = activityKey(a, ex);
+        if (bank[key]) {
+          exIds.push(key);
+          base += ex.xp;
+          continue;
+        }
         for (const day of Object.values(state.checks)) {
-          if (day[activityKey(a, ex)]) {
-            exIds.push(activityKey(a, ex));
+          if (day[key]) {
+            exIds.push(key);
             base += ex.xp;
             break;
           }
@@ -231,6 +249,7 @@ export function useGameState() {
   const buildSave = useCallback((): GistSave => {
     return {
       checks: stateRef.current.checks,
+      bank: stateRef.current.bank ?? {},
       startDate: stateRef.current.startDate,
       updatedAt: new Date().toISOString(),
     };
@@ -259,7 +278,7 @@ export function useGameState() {
       const local = buildSave();
       const merged = remote ? mergeSaves(remote, local) : local;
       if (remote) {
-        setState(() => ({ checks: merged.checks, startDate: merged.startDate }));
+        setState(() => ({ checks: merged.checks, bank: merged.bank ?? {}, startDate: merged.startDate }));
       }
       await pushGistSave(syncCfg.token, syncCfg.gistId, merged);
       setSyncStatus("idle");
@@ -298,7 +317,7 @@ export function useGameState() {
         const local = buildSave();
         const merged = remote ? mergeSaves(remote, local) : local;
         if (remote && JSON.stringify(merged.checks) !== JSON.stringify(local.checks)) {
-          setState(() => ({ checks: merged.checks, startDate: merged.startDate }));
+          setState(() => ({ checks: merged.checks, bank: merged.bank ?? {}, startDate: merged.startDate }));
         }
         await pushGistSave(full.token, full.gistId, merged);
         setSyncStatus("idle");

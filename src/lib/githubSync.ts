@@ -2,6 +2,7 @@
 
 export interface GistSave {
   checks: Record<string, Record<string, boolean>>;
+  bank?: Record<string, boolean>; // XP conquistada (checks aposentados pelo LIMPAR)
   startDate: string;
   updatedAt: string;
 }
@@ -117,7 +118,9 @@ export function mergeSaves(a: GistSave, b: GistSave): GistSave {
       checks[date] = { ...(checks[date] ?? {}), ...day };
     }
   }
+  // banco de XP: união (o que foi conquistado em qualquer lado permanece)
+  const bank: Record<string, boolean> = { ...(a.bank ?? {}), ...(b.bank ?? {}) };
   // startDate mais antiga vence (marca o início real do plano)
   const startDate = a.startDate < b.startDate ? a.startDate : b.startDate;
-  return { checks, startDate, updatedAt: new Date().toISOString() };
+  return { checks, bank, startDate, updatedAt: new Date().toISOString() };
 }

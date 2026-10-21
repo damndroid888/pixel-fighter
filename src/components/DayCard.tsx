@@ -128,7 +128,7 @@ export function DayCard({ activity, dateISO, checks, onToggle, onClear, compact,
               onClick={() => {
                 if (
                   window.confirm(
-                    `Limpar ${doneCount} exercício(s) marcado(s) neste dia? O XP desse dia será removido.`
+                    `Limpar ${doneCount} exercício(s) marcado(s) neste dia? As marcações somem, mas a XP conquistada fica guardada.`
                   )
                 )
                   onClear(dateISO, activity);

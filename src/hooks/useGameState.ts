@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ACTIVITIES,
   ACHIEVEMENTS,
+  FASE2_ACTIVITIES,
   LEVELS,
   NEIGONG_DAILY,
   NEIGONG_DOMINGO,
@@ -86,8 +87,30 @@ export interface ActivityResult {
   xp: number; // inclui bônus se completo
 }
 
-function allActivities(): Activity[] {
-  return [...ACTIVITIES, ...PHASE0_ACTIVITIES, NEIGONG_DAILY, NEIGONG_DOMINGO, STUDY_DAILY, STUDY_SUNDAY];
+// fase corrente: 0 = semanas 1–2 · 1 = 3–6 · 2 = 7–14 · 3 = 15+ (Fase 3 usa a lista da Fase 2)
+export function phaseForWeek(weekNumber: number): 0 | 1 | 2 | 3 {
+  return weekNumber <= 2 ? 0 : weekNumber <= 6 ? 1 : weekNumber <= 14 ? 2 : 3;
+}
+
+export function mainListForPhase(phase: 0 | 1 | 2 | 3): Activity[] {
+  return phase === 0 ? PHASE0_ACTIVITIES : phase === 1 ? ACTIVITIES : FASE2_ACTIVITIES;
+}
+
+function mergedExercises(a: Activity): Exercise[] {
+  return a.warmup && a.warmup.length > 0 ? [...a.warmup, ...a.exercises] : a.exercises;
+}
+
+// todas as fontes de XP (todas as fases): a XP conquistada nunca se perde ao trocar de fase
+function allSources(): Activity[] {
+  return [
+    ...ACTIVITIES,
+    ...FASE2_ACTIVITIES,
+    ...PHASE0_ACTIVITIES,
+    NEIGONG_DAILY,
+    NEIGONG_DOMINGO,
+    STUDY_DAILY,
+    STUDY_SUNDAY,
+  ];
 }
 
 function activityKey(a: Activity, ex: Exercise): string {
@@ -145,44 +168,71 @@ export function useGameState() {
     });
   }, []);
 
+  // semana da fase (1–26) a partir da data de início
+  const weekNumber = useMemo(() => {
+    const start = new Date(state.startDate + "T00:00:00");
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - start.getTime()) / (7 * 24 * 3600 * 1000));
+    return Math.min(Math.max(diff + 1, 1), 26);
+  }, [state.startDate]);
+
   // ---- derivados ----
+  const phase = phaseForWeek(weekNumber);
   const { totalXp, results } = useMemo(() => {
     let xp = 0;
     const bank = state.bank ?? {};
-    const res: Record<string, ActivityResult> = {};
-    for (const a of allActivities()) {
-      const exs = a.warmup && a.warmup.length > 0 ? [...a.warmup, ...a.exercises] : a.exercises;
-      const exIds: string[] = [];
-      let base = 0;
-      for (const ex of exs) {
+    // 1) XP total: união de TODAS as fases (dedupe por chave) — XP conquistada nunca se perde
+    const seen = new Set<string>();
+    for (const a of allSources()) {
+      for (const ex of mergedExercises(a)) {
         const key = activityKey(a, ex);
+        if (seen.has(key)) continue;
+        seen.add(key);
         if (bank[key]) {
-          exIds.push(key);
-          base += ex.xp;
+          xp += ex.xp;
           continue;
         }
         for (const day of Object.values(state.checks)) {
           if (day[key]) {
-            exIds.push(key);
-            base += ex.xp;
+            xp += ex.xp;
             break;
           }
         }
       }
+    }
+    // 2) results da FASE ATUAL (define "completo" conforme a lista exibida agora)
+    //    + bônus por atividade: contado 1× se qualquer versão da atividade (qualquer fase) estiver completa
+    const res: Record<string, ActivityResult> = {};
+    const currentIds = new Set([
+      ...mainListForPhase(phase).map((a) => a.id),
+      NEIGONG_DAILY.id,
+      NEIGONG_DOMINGO.id,
+      STUDY_DAILY.id,
+      STUDY_SUNDAY.id,
+    ]);
+    const bonusGiven = new Set<string>();
+    for (const a of allSources()) {
+      const exs = mergedExercises(a);
+      const exIds: string[] = [];
+      let base = 0;
+      for (const ex of exs) {
+        const key = activityKey(a, ex);
+        if (bank[key] || Object.values(state.checks).some((d) => d[key])) {
+          exIds.push(key);
+          base += ex.xp;
+        }
+      }
       const complete = exIds.length === exs.length;
-      const gained = base + (complete ? a.bonusXp : 0);
-      xp += gained;
-      res[a.id] = {
-        activity: a,
-        exIds,
-        done: exIds.length,
-        total: exs.length,
-        complete,
-        xp: gained,
-      };
+      if (complete && !bonusGiven.has(a.id)) {
+        bonusGiven.add(a.id);
+        xp += a.bonusXp;
+      }
+      if (currentIds.has(a.id) && !res[a.id]) {
+        res[a.id] = { activity: a, exIds, done: exIds.length, total: exs.length, complete, xp: base };
+      }
     }
     return { totalXp: xp, results: res };
-  }, [state]);
+  }, [state, phase]);
 
   const level = useMemo(() => {
     let idx = 0;
@@ -210,22 +260,12 @@ export function useGameState() {
     return count;
   }, [state]);
 
-  // semana da fase (1-4) a partir da data de início
-  const weekNumber = useMemo(() => {
-    const start = new Date(state.startDate + "T00:00:00");
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - start.getTime()) / (7 * 24 * 3600 * 1000));
-    return Math.min(Math.max(diff + 1, 1), 4);
-  }, [state.startDate]);
-
-  // progresso da semana corrente: atividades principais completas / 4
-  // Fase 0 (semanas 1–2) conta os blocos leves; Fase 1 conta os treinos principais
+  // progresso da semana corrente: atividades principais completas da fase atual
   const weekProgress = useMemo(() => {
-    const phase = weekNumber <= 2 ? 0 : 1;
-    const list = phase === 0 ? PHASE0_ACTIVITIES : ACTIVITIES;
+    const list = mainListForPhase(phase);
     const done = list.filter((a) => results[a.id]?.complete).length;
     return { done, total: list.length };
-  }, [results, weekNumber]);
+  }, [results, phase]);
 
   // checks de uma data específica
   const dayChecks = useCallback(

@@ -175,6 +175,10 @@ const G = {
     "Como fazer:\n• Deitado de bruços, braços estendidos à frente\n• Levante braços e pernas ao mesmo tempo, olhando para o chão (pescoço neutro)\n• Segure 2s no alto apertando as costas e glúteos\n• Desça devagar\nCuidados: não force a lombar — o movimento vem das costas e glúteos. Fortalece a cadeia posterior: postura de luta e proteção da coluna no BJJ.",
   facePull:
     "Como fazer:\n• Prenda a faixa na altura do rosto (porta ou ponto firme)\n• Segure com as duas mãos, braços estendidos\n• Puxe em direção ao rosto, ABRINDO os cotovelos para os lados (como um arco)\n• Termine com as mãos ao lado das orelhas, escápulas apertadas\nCuidados: carga leve e controle total. Este exercício equilibra os ombros de quem soca — essencial para não desenvolver dor de boxeador.",
+  bulgaro:
+    "Como fazer:\n• Fique de costas para um banco/cadeira firme e apoie o peito do pé de trás na borda\n• Dê um passo longo à frente — o joelho da frente NÃO passa muito da ponta do pé\n• Desça o corpo verticalmente, tronco ereto, até ~90° do joelho da frente\n• Suba empurrando o chão com o pé da frente; foque na força do glúteo\nCuidados: segure numa parede/peso de mão se o equilíbrio falhar — segurança antes de orgulho. O passo longo é o que protege o LCA: ele mantém a carga no quadril/glúteo, não no joelho. Troque de perna e faça as reps completas de cada lado.",
+  negativoChin:
+    "Como fazer:\n• Barra de porta ou mesa bem firme na altura da cabeça\n• Pule (ou alcance na ponta dos pés) até a posição alta: queixo ACIMA da barra, pegada neutra (palmas uma de cada lado)\n• Desça SOZINHO, o mais devagar que conseguir (3–5 segundos), até os braços quase estenderem\n• Repouse e repita\nCuidados: SÓ comece quando o cotovelo ficar 2 semanas completas sem dor. Pega neutra é obrigatória — pega supinada (palma para você) carrega demais o tendão da epicondilite. Se a descida acelerar sozinha, a série acabou — não force.",
   pranchaLateral:
     "Como fazer:\n• Deite de lado, antebraço no chão, cotovelo sob o ombro\n• Suba o quadril até o corpo ficar em linha reta\n• Braço de cima pode apontar para o teto\n• Segure 20s de cada lado\nCuidados: quadril para frente, não para trás. Óbvio que é difícil — tremedeira leve é normal; dor lombar não é.",
   jabs:
@@ -297,6 +301,102 @@ export const ACTIVITIES: Activity[] = [
       { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2 × 2 min, suave", pattern: "skill", guide: G.shadowboxing, img: "exercises/sb.png" },
       { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade, img: "exercises/mo.png" },
       { id: "al", name: "Alongamento completo", xp: 10, hint: "4 min", guide: G.alongamento, img: "exercises/al.png" },
+    ],
+  },
+];
+
+// ===== FASE 2 — "Construção" (semanas 7–14) =====
+// Fase 3 (15+) reutiliza esta mesma lista — só muda o rótulo no header.
+// Progressão: padrões consolidados ganham volume e versões mais difíceis.
+
+export const FASE2_ACTIVITIES: Activity[] = [
+  {
+    id: "push_core",
+    weekday: 1,
+    dayLabel: "Segunda",
+    title: "Push + Core — Empurrar & Tronco",
+    emoji: "✊",
+    accent: "#f97316",
+    bonusXp: 30,
+    versions: {
+      red: "Aquecimento + flexão comum 1×6 + prancha 1×30s + respiração",
+      yellow: "+ flexão comum 3×8 · pike push-up 1×6 · dead bug 3×8",
+      green: "+ pike push-up pés elevados 2×6-8 · reab. cotovelo",
+    },
+    warmup: WARMUP_MAIN,
+    exercises: [
+      { id: "fc", name: "Flexão comum", xp: 15, hint: "3×8-12", pattern: "push", guide: G.flexaoComum },
+      { id: "pp", name: "Pike push-up (pés elevados se possível)", xp: 15, hint: "2×6-8", pattern: "push", guide: G.pikePushup, img: "exercises/pp.png" },
+      { id: "pl", name: "Prancha isométrica", xp: 10, hint: "3×30-45s", pattern: "core", guide: G.prancha, img: "exercises/pl.png" },
+      { id: "db", name: "Dead bug", xp: 10, hint: "3×10", pattern: "core", guide: G.deadbug, img: "exercises/db.png" },
+      { id: "rc", name: "Reabilitação de cotovelo", xp: 10, hint: "5 min", guide: G.reabilitacao },
+    ],
+  },
+  {
+    id: "squat_single",
+    weekday: 2,
+    dayLabel: "Terça",
+    title: "Squat + Single Leg — Pernas & Raiz",
+    emoji: "🦵",
+    accent: "#ef4444",
+    bonusXp: 30,
+    versions: {
+      red: "Aquecimento + agachamento 2×10 + apoio unipodal 2×20s",
+      yellow: "+ agachamento 3×12 · afundo 2×8/perna · ext. joelho 2×12",
+      green: "+ split squat búlgaro 2×8/perna (parede ao lado)",
+    },
+    warmup: WARMUP_MAIN,
+    exercises: [
+      { id: "ag", name: "Agachamento livre", xp: 15, hint: "3×12-15", pattern: "squat", guide: G.agachamentoLivre, img: "exercises/ag.png" },
+      { id: "bl", name: "Split squat búlgaro", xp: 15, hint: "2×8/perna, passo longo", pattern: "single", guide: G.bulgaro },
+      { id: "af", name: "Afundo estático", xp: 10, hint: "2×8/perna", pattern: "single", guide: G.afundoEstatico, img: "exercises/af.png" },
+      { id: "pt", name: "Elevação de panturrilha", xp: 10, hint: "3×15-20", pattern: "single", guide: G.panturrilha, img: "exercises/pt.png" },
+      { id: "et", name: "Extensão terminal de joelho (faixa)", xp: 10, hint: "2×12/perna", pattern: "single", guide: G.extensaoJoelho, img: "exercises/et.png" },
+    ],
+  },
+  {
+    id: "pull_core",
+    weekday: 4,
+    dayLabel: "Quinta",
+    title: "Pull + Core — Puxar & Tronco",
+    emoji: "🪢",
+    accent: "#22c55e",
+    bonusXp: 30,
+    versions: {
+      red: "Aquecimento + remada com faixa 2×12 + superman 2×10",
+      yellow: "+ remada australiana 3×6-8 · face pull 3×12 · prancha lateral 2×20s",
+      green: "+ negativos de chin-up 2×3-5 (só se cotovelo 100%)",
+    },
+    warmup: WARMUP_MAIN,
+    exercises: [
+      { id: "rf", name: "Remada com faixa (pegada neutra)", xp: 15, hint: "3×12", pattern: "pull", guide: G.remadaFaixa, img: "exercises/rf.png" },
+      { id: "ra", name: "Remada australiana (pés elevados)", xp: 15, hint: "3×6-8", pattern: "pull", guide: G.remadaAustraliana },
+      { id: "fp", name: "Face pull com faixa", xp: 10, hint: "3×12", pattern: "pull", guide: G.facePull, img: "exercises/fp.png" },
+      { id: "nc", name: "Negativos de chin-up (pegada neutra)", xp: 15, hint: "2×3-5, 3-5s descendo", pattern: "pull", guide: G.negativoChin },
+      { id: "sm", name: "Superman", xp: 10, hint: "3×12", pattern: "core", guide: G.superman, img: "exercises/sm.png" },
+      { id: "pl", name: "Prancha lateral", xp: 10, hint: "2×20s/lado", pattern: "core", guide: G.pranchaLateral, img: "exercises/pl2.png" },
+    ],
+  },
+  {
+    id: "bend_circuit",
+    weekday: 6,
+    dayLabel: "Sábado",
+    title: "Bend + Circuito do Lutador",
+    emoji: "⤵",
+    accent: "#eab308",
+    bonusXp: 30,
+    versions: {
+      red: "Aquecimento + good morning 2×8 + shadowboxing 1×3min",
+      yellow: "+ circuito 2 rodadas · shadow 2×3min · mobilidade 3min",
+      green: "+ circuito 3 rodadas · alongamento 5min",
+    },
+    warmup: WARMUP_MAIN,
+    exercises: [
+      { id: "gm", name: "Good morning com mochila leve", xp: 15, hint: "3×10", pattern: "bend", guide: G.goodMorning, img: "exercises/gm.png" },
+      { id: "ci", name: "Circuito do Lutador", xp: 15, hint: "2-3 rodadas", pattern: "core", guide: G.circuito, img: "exercises/ci.png" },
+      { id: "sb", name: "Shadowboxing técnico", xp: 15, hint: "2×3 min", pattern: "skill", guide: G.shadowboxing, img: "exercises/sb.png" },
+      { id: "mo", name: "Mobilidade (quadril/tornozelo/coluna)", xp: 10, hint: "3 min", guide: G.mobilidade, img: "exercises/mo.png" },
+      { id: "al", name: "Alongamento completo", xp: 10, hint: "5 min", guide: G.alongamento, img: "exercises/al.png" },
     ],
   },
 ];
@@ -427,12 +527,21 @@ export const REST_DAYS: Record<number, string> = {
   5: "Recuperação ativa — caminhada leve 20–30 min",
 };
 
-export const WEEK_FOCUS = [
-  "FASE 0 — SÓ COMPARECER. 12 min por sessão; a versão mínima conta. Zhan zhuang: 1 min.",
-  "FASE 0 — 3 presenças na semana = critério de avanço cumprido. Zhan zhuang: 1–2 min.",
-  "FASE 1 — volume de entrada: flexão inclinada 2×8 · zhan zhuang 3 min.",
-  "FASE 1 — agachamento 3×10 · remada 2×10 · zhan zhuang 5 min.",
-];
+export function weekFocusLabel(week: number): string {
+  if (week <= 1)
+    return "FASE 0 — SÓ COMPARECER. 12 min por sessão; a versão mínima conta. Zhan zhuang: 1 min.";
+  if (week <= 2)
+    return "FASE 0 — 3 presenças na semana = critério de avanço cumprido. Zhan zhuang: 1–2 min.";
+  if (week <= 3)
+    return "FASE 1 — volume de entrada: flexão inclinada 2×8 · zhan zhuang 3 min.";
+  if (week <= 6)
+    return "FASE 1 — semana cheia: flexão 3×12 · agachamento 3×15 · zhan zhuang 10 min.";
+  if (week <= 10)
+    return "FASE 2 — Construção: flexão comum 3×8 · búlgaro 2×8/perna · zhan zhuang 12 min.";
+  if (week <= 14)
+    return "FASE 2 — rounds de 3 min · negativos de chin-up (só se cotovelo 100%) · avaliar aula experimental.";
+  return "FASE 3 — Contato: mantenha a base e some as aulas de boxe/BJJ. Neigong diário.";
+}
 
 export const LEVELS = [
   { xp: 0, name: "Calouro do Dojo", stage: 0 },

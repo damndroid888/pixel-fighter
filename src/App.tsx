@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Toaster, toast } from "sonner";
 import {
-  ACTIVITIES,
   NEIGONG_DAILY,
   NEIGONG_DOMINGO,
-  PHASE0_ACTIVITIES,
   REST_DAYS,
-  WEEK_FOCUS,
   WEEK_ORDER,
+  weekFocusLabel,
 } from "@/data/plan";
 import type { Activity, EnergyMode } from "@/data/plan";
 import { STUDY_DAILY, STUDY_SUNDAY } from "@/data/study";
-import { useGameState } from "@/hooks/useGameState";
+import { useGameState, phaseForWeek, mainListForPhase } from "@/hooks/useGameState";
 import { PixelAvatar } from "@/components/PixelAvatar";
 import { DayCard } from "@/components/DayCard";
 import { AchievementsPanel } from "@/components/AchievementsPanel";
@@ -100,15 +98,23 @@ export default function App() {
   }, [game.achievements]);
 
   // atividade principal de cada dia da semana visual
-  // Fase 0 (semanas 1–2): blocos leves de ~12 min · Fase 1 (semanas 3+): treinos principais
-  const phase = game.weekNumber <= 2 ? 0 : 1;
+  // Fase 0 (1–2): blocos leves · Fase 1 (3–6): fundamentos · Fase 2/3 (7+): construção
+  const phase = phaseForWeek(game.weekNumber);
   const mainByIdx = useMemo(() => {
     const map = new Map<number, Activity>();
-    const list = phase === 0 ? PHASE0_ACTIVITIES : ACTIVITIES;
-    for (const a of list) map.set((a.weekday + 6) % 7, a);
+    for (const a of mainListForPhase(phase)) map.set((a.weekday + 6) % 7, a);
     map.set(6, NEIGONG_DOMINGO); // domingo = índice 6
     return map;
   }, [phase]);
+
+  const phaseHeader =
+    phase === 0
+      ? `Fase 0 · Acender o Dojo · Semana ${game.weekNumber}/2 — só comparecer`
+      : phase === 1
+        ? `Fase 1 · Fundamentos · Semana ${game.weekNumber}/6 — preparação p/ boxe & BJJ`
+        : phase === 2
+          ? `Fase 2 · Construção · Semana ${game.weekNumber}/14 — força p/ golpes & quedas`
+          : `Fase 3 · Contato · Semana ${game.weekNumber}/26 — boxe & BJJ de verdade`;
 
   const todayMain = mainByIdx.get(todayIdx) ?? null;
   const todayRest = REST_DAYS[new Date().getDay()];
@@ -126,11 +132,7 @@ export default function App() {
             <h1 className="font-pixel text-sm sm:text-base text-amber-400 drop-shadow-[2px_2px_0_#7c2d12]">
               PIXEL FIGHTER
             </h1>
-            <p className="text-[11px] text-slate-400 mt-1">
-              {phase === 0
-                ? `Fase 0 · Acender o Dojo · Semana ${game.weekNumber}/2 — só comparecer`
-                : `Fase 1 · Fundamentos · Semana ${game.weekNumber}/4 — preparação p/ boxe & BJJ`}
-            </p>
+            <p className="text-[11px] text-slate-400 mt-1">{phaseHeader}</p>
           </div>
           <div className="flex items-center gap-3">
             <SyncChip sync={game.sync} />
@@ -183,7 +185,7 @@ export default function App() {
               <div className="pixel-panel p-2">
                 <div className="font-pixel text-[8px] text-emerald-400">FOCO DA SEMANA</div>
                 <div className="text-[11px] text-slate-300 mt-1 leading-snug">
-                  {WEEK_FOCUS[game.weekNumber - 1]}
+                  {weekFocusLabel(game.weekNumber)}
                 </div>
               </div>
             </div>
